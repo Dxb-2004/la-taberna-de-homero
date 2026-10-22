@@ -9,8 +9,11 @@ body.admin-body {
   font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
   margin: 0;
   padding: 0;
-  padding-bottom: 80px; /* Espacio para barra de navegación móvil */
+  padding-bottom: 84px; /* Espacio para barra de navegación móvil */
   min-height: 100vh;
+  overflow-x: hidden !important;
+  width: 100% !important;
+  max-width: 100vw !important;
 }
 
 /* --- HEADER DEL PANEL --- */

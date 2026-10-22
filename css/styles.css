@@ -72,6 +72,9 @@ html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden !important;
+  width: 100% !important;
+  max-width: 100vw !important;
 }
 
 body {
@@ -203,28 +206,40 @@ body {
   background: #FFFBEB;
   border-bottom: 1px solid #FDE68A;
   overflow: hidden;
-  height: 38px;
+  height: 36px;
   display: flex;
   align-items: center;
   position: relative;
   z-index: 50;
+  width: 100%;
+  max-width: 100vw;
 }
 
+.ticker-track,
 .ticker-inner {
   display: flex;
   align-items: center;
   white-space: nowrap;
-  animation: tickerScroll 42s linear infinite;
-  gap: 3.5rem;
+  flex-shrink: 0;
+  gap: 2.5rem;
+  padding-right: 2.5rem;
+  animation: tickerLoop 34s linear infinite;
+  will-change: transform;
 }
 
-.ticker-inner:hover {
+.top-ticker:hover .ticker-track,
+.top-ticker:hover .ticker-inner {
   animation-play-state: paused;
+}
+
+@keyframes tickerLoop {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
 }
 
 @keyframes tickerScroll {
   0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  100% { transform: translateX(-100%); }
 }
 
 .ticker-item {
@@ -2200,24 +2215,349 @@ body {
 }
 
 @media (max-width: 768px) {
+  /* 1. Prevención total de desbordamiento horizontal */
+  html, body {
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
+    width: 100% !important;
+    position: relative;
+  }
+
+  /* 2. Barra inicial (Ticker) */
+  .top-ticker {
+    height: 32px;
+  }
+  .ticker-track,
+  .ticker-inner {
+    gap: 1.5rem;
+    padding-right: 1.5rem;
+    animation-duration: 26s;
+  }
+  .ticker-item {
+    font-size: 0.72rem;
+  }
+
+  /* 3. Header Navbar en celulares - Encuadre perfecto sin desbordar */
+  .site-header {
+    width: 100%;
+  }
+
+  .header-container {
+    padding: 0.6rem 0.85rem;
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .brand-wrapper {
+    gap: 0.55rem;
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .brand-avatar {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    flex-shrink: 0;
+  }
+
+  .brand-meta {
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .brand-meta h1 {
+    font-size: 1.32rem;
+    line-height: 1.05;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: 0.02em;
+    margin: 0;
+  }
+
+  .brand-status {
+    font-size: 0.68rem;
+    gap: 0.35rem;
+    margin-top: 0.15rem;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .status-pulse {
+    width: 7px;
+    height: 7px;
+    min-width: 7px;
+    flex-shrink: 0;
+  }
+
+  #statusText {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .header-right {
+    gap: 0.45rem;
+    flex-shrink: 0;
+  }
+
+  /* Botón WhatsApp en header móvil: compacto redondo de 38px */
+  .header-wa-btn {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    padding: 0;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .header-wa-btn .header-wa-text {
+    display: none;
+  }
+
+  .header-wa-btn i {
+    font-size: 1.15rem;
+    margin: 0;
+  }
+
+  /* Botón Tu Pedido en header móvil: compacto con badge */
+  .cart-trigger-btn {
+    padding: 0.45rem 0.65rem;
+    font-size: 0.78rem;
+    border-radius: var(--radius-pill);
+    gap: 0.35rem;
+  }
+
+  .cart-trigger-btn .cart-btn-label {
+    display: none;
+  }
+
+  .cart-counter-pill {
+    min-width: 18px;
+    height: 18px;
+    font-size: 0.7rem;
+    padding: 0 4px;
+  }
+
+  /* 4. Hero Tropera en móviles */
+  .hero-wrapper {
+    margin: 1rem auto;
+    padding: 0 0.85rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .hero-tropera-card {
+    padding: 2.25rem 1rem 1.75rem;
+    border-radius: var(--radius-lg);
+  }
+
+  .hero-tropera-title {
+    font-size: clamp(2.3rem, 10vw, 3.5rem);
+    line-height: 1;
+    margin-bottom: 0.85rem;
+  }
+
+  .hero-tropera-subtitle {
+    font-size: 0.88rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.45;
+  }
+
+  .hero-tropera-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.75rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .hero-tropera-actions .btn {
+    width: 100%;
+  }
+
+  .tropera-meta-banner {
+    padding: 0.65rem 0.85rem;
+    border-radius: var(--radius-md);
+    font-size: 0.72rem;
+    gap: 0.5rem;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .meta-separator {
+    display: none;
+  }
+
+  /* 5. Manifiesto en móviles */
+  .tavern-manifesto-section {
+    margin: 1rem auto;
+    padding: 0 0.85rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
   .manifesto-container {
-    padding: 2rem 1.5rem;
+    padding: 1.75rem 1rem;
+    border-radius: var(--radius-lg);
+  }
+
+  .manifesto-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .tavern-portrait-frame {
+    max-width: 100%;
+  }
+
+  .tavern-portrait-img {
+    height: 250px;
+  }
+
+  .manifesto-heading {
+    font-size: clamp(1.85rem, 8vw, 2.4rem);
+    line-height: 1.08;
   }
 
   .manifesto-features-strip {
     grid-template-columns: 1fr;
+    gap: 0.65rem;
+  }
+
+  /* 6. Panel de Catálogo y Controles */
+  .catalog-control-panel {
+    margin: 1.25rem auto 1.5rem;
+    padding: 0 0.85rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .controls-card {
+    padding: 1rem;
+    border-radius: var(--radius-md);
   }
 
   .search-and-sort-row {
     flex-direction: column;
+    gap: 0.75rem;
   }
 
   .sort-dropdown {
     width: 100%;
+    min-width: 0;
+  }
+
+  .categories-tabs {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 0.25rem;
+  }
+
+  .categories-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* 7. Grilla de Productos en Móviles */
+  .catalog-section {
+    padding: 0 0.85rem;
+    margin-bottom: 3rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .catalog-heading {
+    font-size: 1.65rem;
+  }
+
+  .products-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    width: 100%;
+  }
+
+  /* 8. Bento Grid */
+  .value-bento-section {
+    padding: 0 0.85rem;
+    margin-bottom: 2.5rem;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .bento-grid {
     grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+
+  .bento-box {
+    padding: 1.35rem 1.15rem;
+  }
+
+  /* 9. Mapa Interactivo */
+  .tavern-map-section {
+    padding: 0 0.85rem;
+    margin-bottom: 2.5rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .map-interactive-card {
+    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .map-address-text {
+    font-size: 1.5rem;
+  }
+
+  /* 10. Footer */
+  .tavern-footer {
+    padding: 3rem 1rem 1.5rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .footer-inner-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .footer-bottom-bar {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.75rem;
+  }
+
+  /* 11. Barra Móvil Inferior Fija (Dock) */
+  .mobile-bottom-dock {
+    display: block;
+    height: 64px;
+    padding: 0.5rem 0.85rem;
+  }
+
+  body {
+    padding-bottom: 84px !important;
+  }
+
+  /* 12. Modal de Detalle de Producto en Móvil */
+  .modal-overlay {
+    padding: 0.65rem;
+    align-items: flex-end;
+  }
+
+  .modal-dialog {
+    max-height: 88vh;
+    overflow-y: auto;
+    border-radius: 16px 16px 0 0;
   }
 
   .modal-inner-grid {
@@ -2225,27 +2565,43 @@ body {
   }
 
   .modal-media-wrap {
-    height: 220px;
-    border-right: none;
-    border-bottom: 1px solid var(--border-subtle);
+    height: 200px;
   }
 
-  .footer-inner-grid {
-    grid-template-columns: 1fr;
-    gap: 2.5rem;
+  .modal-content-wrap {
+    padding: 1.25rem 1rem;
   }
 
-  .footer-bottom-bar {
-    flex-direction: column;
-    text-align: center;
+  /* 13. Drawer de Carrito en Móvil */
+  .cart-sidebar {
+    max-width: 100%;
+    width: 100%;
   }
 
-  .mobile-bottom-dock {
-    display: block;
+  /* 14. Modales de Administración */
+  .admin-login-card {
+    padding: 1.75rem 1.25rem;
+    width: 95vw;
+    max-width: 380px;
   }
 
-  body {
-    padding-bottom: 70px;
+  .db-modal-container {
+    max-height: 92vh;
+    width: 96vw;
+  }
+}
+
+@media (max-width: 380px) {
+  .brand-meta h1 {
+    font-size: 1.15rem;
+  }
+  .brand-avatar {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+  }
+  .header-container {
+    padding: 0.5rem 0.65rem;
   }
 }
 
