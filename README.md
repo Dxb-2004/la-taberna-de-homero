@@ -1,8 +1,7 @@
 # 🍻 LA TABERNA DE HOMERO - Estilo Craft Tavern & Brewpub (Inspiración Tropera)
 
 Sitio web renovado por completo para **La Taberna de Homero** (Vicente López 139, Bahía Blanca, Buenos Aires).
-Diseño artesanal, auténtico y con carácter de cervecería independiente (inspirado en la estética rústica y de cofradía de la **Taberna No Sé / Cerveza Tropera**), dejando atrás cualquier aspecto de plantilla genérica para crear una atmósfera cálida, acogedora y de alta conversión optimizada para pedidos directos por WhatsApp.
-
+Diseño artesanal, auténtico y con carácter 
 ---
 
 ## 🌟 Principales Características del Estilo Tropera Craft Tavern
