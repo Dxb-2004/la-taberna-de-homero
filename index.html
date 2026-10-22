@@ -138,6 +138,11 @@
       </a>
 
       <div class="header-right">
+        <button class="header-db-btn" id="openDbBtn" title="Base de Datos y Cargar Archivos">
+          <i class="bi bi-database-fill-gear"></i>
+          <span class="db-btn-text">Base de Datos</span>
+        </button>
+
         <a href="https://wa.me/542914981200?text=Hola%20La%20Taberna%20de%20Homero!%20Quiero%20hacer%20una%20consulta" 
            target="_blank" 
            rel="noopener noreferrer" 
@@ -295,6 +300,11 @@
           <option value="price-desc">💎 Mayor precio</option>
           <option value="name-asc">🔤 Nombre A-Z</option>
         </select>
+
+        <button class="btn btn-db-panel" id="openDbCatalogBtn" title="Base de Datos: Cargar archivos CSV/JSON o agregar productos">
+          <i class="bi bi-database-fill-gear"></i>
+          <span>Cargar Archivos / BD</span>
+        </button>
       </div>
 
       <nav class="categories-tabs" id="categoriesRow" aria-label="Categorías del catálogo">
@@ -642,6 +652,264 @@
     </div>
   </div>
 
+  <!-- 11.1. MODAL BASE DE DATOS Y GESTIÓN DE ARCHIVOS -->
+  <div class="db-modal-backdrop" id="databaseModalBackdrop" aria-hidden="true" role="dialog" aria-labelledby="dbModalTitle">
+    <div class="db-modal-container">
+      <div class="db-modal-header">
+        <div class="db-modal-title-group">
+          <div class="db-modal-badge">
+            <i class="bi bi-database-fill-gear"></i> GESTOR DE DATOS
+          </div>
+          <h3 id="dbModalTitle" class="db-modal-title">Base de Datos de la Taberna</h3>
+          <p class="db-modal-subtitle">Cargá archivos CSV/JSON, subí fotos de productos o administrá tu inventario en tiempo real.</p>
+        </div>
+        <button class="modal-close-icon" id="dbModalCloseBtn" aria-label="Cerrar modal de base de datos">&times;</button>
+      </div>
+
+      <!-- Pestañas de Navegación -->
+      <nav class="db-tabs-nav" aria-label="Secciones de la base de datos">
+        <button type="button" class="db-tab-btn active" data-dbtab="upload">
+          <i class="bi bi-cloud-arrow-up-fill"></i>
+          <span>Cargar Archivo</span>
+        </button>
+        <button type="button" class="db-tab-btn" data-dbtab="new-product">
+          <i class="bi bi-plus-circle-fill"></i>
+          <span>Nuevo Producto</span>
+        </button>
+        <button type="button" class="db-tab-btn" data-dbtab="inventory">
+          <i class="bi bi-table"></i>
+          <span>Inventario Actual (<strong id="dbInventoryBadge">24</strong>)</span>
+        </button>
+        <button type="button" class="db-tab-btn" data-dbtab="backup">
+          <i class="bi bi-shield-check"></i>
+          <span>Copia de Seguridad</span>
+        </button>
+      </nav>
+
+      <!-- Contenido de Pestañas -->
+      <div class="db-modal-body">
+        <!-- PESTAÑA 1: CARGAR ARCHIVO (CSV / JSON) -->
+        <div class="db-tab-pane active" id="dbTabUpload">
+          <div class="db-dropzone" id="dbDropzone">
+            <input type="file" id="dbFileInput" accept=".csv, .json, text/csv, application/json" style="display: none;">
+            <div class="db-dropzone-icon">
+              <i class="bi bi-file-earmark-spreadsheet"></i>
+            </div>
+            <h4 class="db-dropzone-title">Arrastrá tu archivo acá o hacé clic para seleccionar</h4>
+            <p class="db-dropzone-hint">Formatos soportados: <strong>.CSV</strong> (separado por coma o punto y coma) o <strong>.JSON</strong></p>
+            <button type="button" class="btn btn-outline btn-sm" id="dbBrowseFilesBtn">
+              <i class="bi bi-folder2-open"></i> Explorar Archivos
+            </button>
+          </div>
+
+          <!-- Modos de Importación -->
+          <div class="db-import-options">
+            <span class="db-options-label">Modo de importación:</span>
+            <label class="db-radio-label">
+              <input type="radio" name="dbImportMode" value="append" checked>
+              <span><strong>Añadir</strong> a los productos actuales</span>
+            </label>
+            <label class="db-radio-label">
+              <input type="radio" name="dbImportMode" value="replace">
+              <span><strong>Reemplazar</strong> el catálogo completo con este archivo</span>
+            </label>
+          </div>
+
+          <!-- Previsualización del archivo cargado -->
+          <div class="db-preview-card" id="dbPreviewCard" style="display: none;">
+            <div class="db-preview-header">
+              <div class="db-preview-summary">
+                <i class="bi bi-check-circle-fill text-success"></i>
+                <span id="dbPreviewFilename">archivo.csv</span>
+                <span class="db-preview-count" id="dbPreviewCount">0 productos detectados</span>
+              </div>
+              <div class="db-preview-actions">
+                <button type="button" class="btn btn-sm btn-ghost" id="dbCancelPreviewBtn">Cancelar</button>
+                <button type="button" class="btn btn-sm btn-primary" id="dbConfirmImportBtn">
+                  <i class="bi bi-box-arrow-in-down"></i> Importar a la Base de Datos
+                </button>
+              </div>
+            </div>
+            <div class="db-preview-table-wrap">
+              <table class="db-table" id="dbPreviewTable">
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Categoría</th>
+                    <th>Precio</th>
+                    <th>Etiqueta</th>
+                    <th>Detalles</th>
+                  </tr>
+                </thead>
+                <tbody id="dbPreviewTableBody">
+                  <!-- Filas dinámicas -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Plantillas para descargar -->
+          <div class="db-templates-card">
+            <div class="db-templates-info">
+              <h5>¿Querés una plantilla para armar tu lista de productos?</h5>
+              <p>Descargá un modelo listo para abrir en Excel con acentos y columnas listas para completar.</p>
+            </div>
+            <div class="db-templates-btns">
+              <button type="button" class="btn btn-secondary btn-sm" id="dbDownloadCSVTemplateBtn">
+                <i class="bi bi-filetype-csv"></i> Descargar Plantilla CSV
+              </button>
+              <button type="button" class="btn btn-ghost btn-sm" id="dbDownloadJSONTemplateBtn">
+                <i class="bi bi-filetype-json"></i> Plantilla JSON
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- PESTAÑA 2: NUEVO PRODUCTO (CARGA MANUAL + FOTO) -->
+        <div class="db-tab-pane" id="dbTabNewProduct">
+          <form id="dbNewProductForm" class="db-form">
+            <div class="db-form-grid">
+              <div class="form-group">
+                <label for="dbProdName">Nombre del Producto <span class="required">*</span></label>
+                <input type="text" id="dbProdName" class="form-input" placeholder="Ej: Cerveza IPA Artesanal" required>
+              </div>
+
+              <div class="form-group">
+                <label for="dbProdCategory">Categoría <span class="required">*</span></label>
+                <select id="dbProdCategory" class="form-input">
+                  <option value="combos">🍸 Combos Previas</option>
+                  <option value="snacks">🍟 Snacks & Quentos</option>
+                  <option value="cervezas">🍻 Cervezas</option>
+                  <option value="pizzas">🍕 Pizzas</option>
+                  <option value="vinos">🍷 Vinos</option>
+                  <option value="gaseosas">🥤 Gaseosas & Hielo</option>
+                  <option value="nueva">+ Crear nueva categoría...</option>
+                </select>
+                <input type="text" id="dbProdCategoryCustom" class="form-input" placeholder="Nombre de la nueva categoría" style="display: none; margin-top: 8px;">
+              </div>
+
+              <div class="form-group">
+                <label for="dbProdPrice">Precio en Pesos ($) <span class="required">*</span></label>
+                <input type="number" id="dbProdPrice" class="form-input" min="0" step="50" placeholder="Ej: 4500" required>
+              </div>
+
+              <div class="form-group">
+                <label for="dbProdBadge">Etiqueta Destacada (Opcional)</label>
+                <input type="text" id="dbProdBadge" class="form-input" placeholder="Ej: 🔥 Más Vendido, ❄️ Bien Fría, ⭐ Recomendado">
+              </div>
+            </div>
+
+            <!-- Carga de Foto -->
+            <div class="form-group db-image-picker-group">
+              <label>Foto del Producto</label>
+              <div class="db-image-inputs">
+                <div class="db-image-file-box">
+                  <label for="dbProdImageFile" class="db-image-upload-trigger">
+                    <i class="bi bi-camera"></i> Subir foto desde el dispositivo
+                  </label>
+                  <input type="file" id="dbProdImageFile" accept="image/*" style="display: none;">
+                  <span class="db-upload-hint">Formatos: JPG, PNG, WEBP (se optimiza automáticamente).</span>
+                </div>
+                <div class="db-image-or">ó</div>
+                <div class="db-image-url-box">
+                  <input type="url" id="dbProdImageUrl" class="form-input" placeholder="Pegar URL de imagen web (https://...)">
+                </div>
+              </div>
+              <!-- Previsualizador de foto seleccionada -->
+              <div class="db-img-preview-box" id="dbImagePreviewWrap" style="display: none;">
+                <img id="dbImagePreview" src="" alt="Previsualización de foto">
+                <button type="button" class="db-img-remove-btn" id="dbRemoveImageBtn" title="Quitar foto">&times;</button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="dbProdDesc">Descripción</label>
+              <textarea id="dbProdDesc" class="form-input" rows="2" placeholder="Detalle tentador del producto para tus clientes..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="dbProdDetails">Características o viñetas (separadas por coma o barra vertical |)</label>
+              <input type="text" id="dbProdDetails" class="form-input" placeholder="Ej: Fría de heladera | Botella 1 Litro | Lista para disfrutar">
+            </div>
+
+            <div class="form-row-checkbox">
+              <label class="custom-checkbox">
+                <input type="checkbox" id="dbProdStock" checked>
+                <span class="checkmark"></span>
+                <span class="checkbox-text">Producto con stock disponible para la venta</span>
+              </label>
+            </div>
+
+            <div class="db-form-footer">
+              <button type="submit" class="btn btn-primary" id="dbSaveProductBtn">
+                <i class="bi bi-check-lg"></i> Guardar Producto en Base de Datos
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- PESTAÑA 3: INVENTARIO ACTUAL -->
+        <div class="db-tab-pane" id="dbTabInventory">
+          <div class="db-inv-toolbar">
+            <div class="db-inv-search">
+              <i class="bi bi-search"></i>
+              <input type="text" id="dbInvSearchInput" placeholder="Filtrar por nombre o categoría...">
+            </div>
+            <button type="button" class="btn btn-outline btn-sm text-danger" id="dbResetDefaultsBtn" title="Restablecer a los 24 productos originales">
+              <i class="bi bi-arrow-counterclockwise"></i> Restablecer valores de fábrica
+            </button>
+          </div>
+
+          <div class="db-inv-table-wrapper">
+            <table class="db-table db-inv-table">
+              <thead>
+                <tr>
+                  <th style="width: 50px;">Foto</th>
+                  <th>ID</th>
+                  <th>Nombre</th>
+                  <th>Categoría</th>
+                  <th>Precio</th>
+                  <th>Stock</th>
+                  <th style="text-align: right;">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="dbInventoryTableBody">
+                <!-- Inyección dinámica -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- PESTAÑA 4: COPIA DE SEGURIDAD & EXPORTACIÓN -->
+        <div class="db-tab-pane" id="dbTabBackup">
+          <div class="db-backup-cards-grid">
+            <div class="db-backup-card">
+              <div class="db-backup-icon-wrap">
+                <i class="bi bi-file-earmark-spreadsheet-fill"></i>
+              </div>
+              <h4>Exportar en formato Excel (.CSV)</h4>
+              <p>Descargá una planilla con todos los productos actuales. Compatible con Microsoft Excel y Google Sheets con acentos incluidos.</p>
+              <button type="button" class="btn btn-primary btn-sm" id="dbExportCSVBtn">
+                <i class="bi bi-download"></i> Descargar CSV
+              </button>
+            </div>
+
+            <div class="db-backup-card">
+              <div class="db-backup-icon-wrap">
+                <i class="bi bi-filetype-json"></i>
+              </div>
+              <h4>Copia de Seguridad (.JSON)</h4>
+              <p>Exportá la base de datos completa de tu tienda en formato JSON estándar para respaldo o migración.</p>
+              <button type="button" class="btn btn-secondary btn-sm" id="dbExportJSONBtn">
+                <i class="bi bi-download"></i> Descargar JSON
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- 12. BARRA INFERIOR FLOTANTE EN MÓVILES -->
   <div class="mobile-bottom-dock">
     <div class="dock-content">
@@ -662,6 +930,7 @@
 
   <!-- Scripts -->
   <script src="js/products.js"></script>
+  <script src="js/database.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

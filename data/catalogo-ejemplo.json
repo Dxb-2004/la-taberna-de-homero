@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Cerveza Duff Helada 710cc",
+    "category": "cervezas",
+    "price": 4500,
+    "badge": "🍻 Exclusiva Taberna",
+    "image": "https://images.unsplash.com/photo-1608270191993-9c595781604a?w=600&auto=format&fit=crop&q=80",
+    "description": "La cerveza oficial de Homero y Moe. Rubia, refrescante y bien fría de heladera.",
+    "details": ["Botella 710cc", "Rubia estilo lager clásica", "Servida bajo cero"],
+    "stock": true
+  },
+  {
+    "name": "Pizza Muzzarella Artesanal Lista para el Horno",
+    "category": "pizzas",
+    "price": 7800,
+    "badge": "🍕 Masa al Molde",
+    "image": "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&auto=format&fit=crop&q=80",
+    "description": "Masa artesanal de fermentación lenta, salsa de tomate y 350g de muzzarella.",
+    "details": ["Masa artesanal fresca", "350g de muzzarella", "Aceitunas negras"],
+    "stock": true
+  },
+  {
+    "name": "Vino Malbec Selección 750ml",
+    "category": "vinos",
+    "price": 5200,
+    "badge": "🍷 Bodega",
+    "image": "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=600&auto=format&fit=crop&q=80",
+    "description": "Malbec mendocino moderno y frutado para compartir en asados.",
+    "details": ["Botella 750ml", "Mendoza, Argentina", "Graduación 13.5%"],
+    "stock": true
+  }
+]

@@ -58,12 +58,33 @@ document.addEventListener('DOMContentLoaded', () => {
   const paymentSelect = document.getElementById('paymentMethod');
   const cashChangeGroup = document.getElementById('cashChangeGroup');
 
+  // Sincronizar catálogo con TavernDB si está presente
+  if (typeof TavernDB !== 'undefined') {
+    PRODUCTS = TavernDB.getProducts();
+    if (typeof getDynamicCategories === 'function') {
+      CATEGORIES = getDynamicCategories();
+    }
+  }
+
   // --- INICIALIZACIÓN ---
   initCategories();
   renderProducts();
   updateCartUI();
   updateLiveStoreStatus();
   setupEventListeners();
+  initDatabaseManager();
+
+  // Escuchar actualizaciones reactivas de la Base de Datos
+  window.addEventListener('taberna:db-updated', () => {
+    PRODUCTS = typeof TavernDB !== 'undefined' ? TavernDB.getProducts() : [...DEFAULT_PRODUCTS];
+    if (typeof getDynamicCategories === 'function') {
+      CATEGORIES = getDynamicCategories();
+    }
+    initCategories();
+    renderProducts();
+    updateCartUI();
+    renderDatabaseInventory();
+  });
 
   // Actualizar estado de apertura cada minuto
   setInterval(updateLiveStoreStatus, 60000);
@@ -124,6 +145,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- CATEGORÍAS ---
   function initCategories() {
     categoriesRow.innerHTML = '';
+    if (typeof getDynamicCategories === 'function') {
+      CATEGORIES = getDynamicCategories();
+    }
     CATEGORIES.forEach(cat => {
       const count = cat.id === 'all' 
         ? PRODUCTS.length 
@@ -614,15 +638,20 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // Escape
+    // Escape y Atajos
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         closeCart();
         closeProductModal();
+        document.getElementById('databaseModalBackdrop')?.classList.remove('active');
       }
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
         e.preventDefault();
         searchInput.focus();
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
+        e.preventDefault();
+        document.getElementById('openDbBtn')?.click();
       }
     });
 
@@ -720,6 +749,396 @@ document.addEventListener('DOMContentLoaded', () => {
         marker.classList.add('pin-hop');
         setTimeout(() => marker.classList.remove('pin-hop'), 650);
       }
+    });
+  }
+
+  // --- GESTOR DE BASE DE DATOS Y CARGA DE ARCHIVOS ---
+  let parsedImportCache = [];
+  let currentUploadedPhotoDataUrl = null;
+
+  function initDatabaseManager() {
+    const dbModal = document.getElementById('databaseModalBackdrop');
+    const openDbBtn = document.getElementById('openDbBtn');
+    const openDbCatalogBtn = document.getElementById('openDbCatalogBtn');
+    const dbModalCloseBtn = document.getElementById('dbModalCloseBtn');
+    if (!dbModal) return;
+
+    // Abrir modal
+    function openDbModal(tabName = 'upload') {
+      dbModal.classList.add('active');
+      dbModal.setAttribute('aria-hidden', 'false');
+      switchDbTab(tabName);
+    }
+
+    // Cerrar modal
+    function closeDbModal() {
+      dbModal.classList.remove('active');
+      dbModal.setAttribute('aria-hidden', 'true');
+    }
+
+    openDbBtn?.addEventListener('click', () => openDbModal('upload'));
+    openDbCatalogBtn?.addEventListener('click', () => openDbModal('upload'));
+    dbModalCloseBtn?.addEventListener('click', closeDbModal);
+    dbModal.addEventListener('click', (e) => {
+      if (e.target === dbModal) closeDbModal();
+    });
+
+    // Pestañas
+    const tabBtns = dbModal.querySelectorAll('.db-tab-btn');
+    const tabPanes = {
+      'upload': document.getElementById('dbTabUpload'),
+      'new-product': document.getElementById('dbTabNewProduct'),
+      'inventory': document.getElementById('dbTabInventory'),
+      'backup': document.getElementById('dbTabBackup')
+    };
+
+    function switchDbTab(targetTab) {
+      tabBtns.forEach(btn => {
+        if (btn.dataset.dbtab === targetTab) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+
+      Object.entries(tabPanes).forEach(([key, pane]) => {
+        if (!pane) return;
+        if (key === targetTab) {
+          pane.classList.add('active');
+        } else {
+          pane.classList.remove('active');
+        }
+      });
+
+      if (targetTab === 'inventory') {
+        renderDatabaseInventory();
+      }
+    }
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => switchDbTab(btn.dataset.dbtab));
+    });
+
+    // Pestaña 1: Carga de Archivo (Drag & Drop + Explorar)
+    const dropzone = document.getElementById('dbDropzone');
+    const fileInput = document.getElementById('dbFileInput');
+    const browseBtn = document.getElementById('dbBrowseFilesBtn');
+    const previewCard = document.getElementById('dbPreviewCard');
+    const previewFilename = document.getElementById('dbPreviewFilename');
+    const previewCount = document.getElementById('dbPreviewCount');
+    const previewTableBody = document.getElementById('dbPreviewTableBody');
+    const cancelPreviewBtn = document.getElementById('dbCancelPreviewBtn');
+    const confirmImportBtn = document.getElementById('dbConfirmImportBtn');
+
+    browseBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      fileInput?.click();
+    });
+
+    dropzone?.addEventListener('click', () => {
+      fileInput?.click();
+    });
+
+    ['dragenter', 'dragover'].forEach(evt => {
+      dropzone?.addEventListener(evt, (e) => {
+        e.preventDefault();
+        dropzone.classList.add('dragover');
+      });
+    });
+
+    ['dragleave', 'drop'].forEach(evt => {
+      dropzone?.addEventListener(evt, (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('dragover');
+      });
+    });
+
+    dropzone?.addEventListener('drop', (e) => {
+      if (e.dataTransfer && e.dataTransfer.files.length > 0) {
+        handleSelectedFile(e.dataTransfer.files[0]);
+      }
+    });
+
+    fileInput?.addEventListener('change', () => {
+      if (fileInput.files && fileInput.files.length > 0) {
+        handleSelectedFile(fileInput.files[0]);
+      }
+    });
+
+    function handleSelectedFile(file) {
+      if (!file) return;
+      const fileName = file.name.toLowerCase();
+      const isCSV = fileName.endsWith('.csv') || file.type.includes('csv');
+      const isJSON = fileName.endsWith('.json') || file.type.includes('json');
+
+      if (!isCSV && !isJSON) {
+        showToast('⚠️ Por favor seleccioná un archivo .CSV o .JSON válido.');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const content = e.target.result;
+          let parsed = [];
+          if (isCSV) {
+            parsed = TavernDB.parseCSV(content);
+          } else {
+            parsed = TavernDB.parseJSON(content);
+          }
+
+          if (parsed.length === 0) {
+            showToast('⚠️ No se detectaron productos válidos en el archivo.');
+            return;
+          }
+
+          parsedImportCache = parsed;
+          previewFilename.textContent = file.name;
+          previewCount.textContent = `${parsed.length} producto${parsed.length === 1 ? '' : 's'} detectado${parsed.length === 1 ? '' : 's'}`;
+
+          // Renderizar hasta 12 filas de preview
+          previewTableBody.innerHTML = parsed.slice(0, 12).map(p => `
+            <tr>
+              <td><strong>${escapeHtml(p.name)}</strong></td>
+              <td><span class="badge badge-gold-outline" style="font-size: 0.72rem;">${escapeHtml(p.category)}</span></td>
+              <td><strong>${formatMoney(p.price)}</strong></td>
+              <td>${p.badge ? `<span style="font-size: 0.75rem;">${escapeHtml(p.badge)}</span>` : '<span style="color: #94A3B8;">-</span>'}</td>
+              <td style="font-size: 0.75rem; color: var(--text-secondary);">${p.details ? escapeHtml(p.details.slice(0, 2).join(' • ')) : '-'}</td>
+            </tr>
+          `).join('');
+
+          if (parsed.length > 12) {
+            previewTableBody.innerHTML += `
+              <tr>
+                <td colspan="5" style="text-align: center; color: var(--text-secondary); font-style: italic;">
+                  ... y ${parsed.length - 12} productos más en este archivo.
+                </td>
+              </tr>
+            `;
+          }
+
+          previewCard.style.display = 'block';
+          dropzone.style.display = 'none';
+        } catch (err) {
+          console.error(err);
+          showToast(`❌ Error al leer archivo: ${err.message}`);
+        }
+      };
+      reader.readAsText(file, 'UTF-8');
+    }
+
+    cancelPreviewBtn?.addEventListener('click', () => {
+      parsedImportCache = [];
+      previewCard.style.display = 'none';
+      dropzone.style.display = 'block';
+      if (fileInput) fileInput.value = '';
+    });
+
+    confirmImportBtn?.addEventListener('click', () => {
+      if (!parsedImportCache || parsedImportCache.length === 0) return;
+
+      const modeInput = document.querySelector('input[name="dbImportMode"]:checked');
+      const mode = modeInput ? modeInput.value : 'append';
+
+      const res = TavernDB.importProducts(parsedImportCache, mode);
+      if (res.success) {
+        showToast(`🎉 ¡${res.importedCount} productos importados con éxito a la base de datos!`);
+        parsedImportCache = [];
+        previewCard.style.display = 'none';
+        dropzone.style.display = 'block';
+        if (fileInput) fileInput.value = '';
+        switchDbTab('inventory');
+      } else {
+        showToast(`❌ Error al importar: ${res.error}`);
+      }
+    });
+
+    // Descarga de plantillas
+    document.getElementById('dbDownloadCSVTemplateBtn')?.addEventListener('click', () => {
+      TavernDB.downloadCSVTemplate();
+    });
+    document.getElementById('dbDownloadJSONTemplateBtn')?.addEventListener('click', () => {
+      TavernDB.downloadJSONTemplate();
+    });
+
+    // Pestaña 2: Nuevo Producto (Formulario Manual)
+    const newProdForm = document.getElementById('dbNewProductForm');
+    const prodCategorySelect = document.getElementById('dbProdCategory');
+    const prodCategoryCustom = document.getElementById('dbProdCategoryCustom');
+    const prodImageFileInput = document.getElementById('dbProdImageFile');
+    const prodImageUrlInput = document.getElementById('dbProdImageUrl');
+    const imagePreviewWrap = document.getElementById('dbImagePreviewWrap');
+    const imagePreviewEl = document.getElementById('dbImagePreview');
+    const removeImageBtn = document.getElementById('dbRemoveImageBtn');
+
+    prodCategorySelect?.addEventListener('change', () => {
+      if (prodCategorySelect.value === 'nueva') {
+        prodCategoryCustom.style.display = 'block';
+        prodCategoryCustom.focus();
+      } else {
+        prodCategoryCustom.style.display = 'none';
+      }
+    });
+
+    prodImageFileInput?.addEventListener('change', async () => {
+      if (prodImageFileInput.files && prodImageFileInput.files[0]) {
+        try {
+          const compressed = await TavernDB.compressImageFile(prodImageFileInput.files[0], 800, 0.8);
+          currentUploadedPhotoDataUrl = compressed;
+          imagePreviewEl.src = compressed;
+          imagePreviewWrap.style.display = 'inline-block';
+          if (prodImageUrlInput) prodImageUrlInput.value = '';
+        } catch (e) {
+          showToast(`⚠️ ${e.message}`);
+        }
+      }
+    });
+
+    prodImageUrlInput?.addEventListener('input', () => {
+      const url = prodImageUrlInput.value.trim();
+      if (url.startsWith('http://') || url.startsWith('https://')) {
+        currentUploadedPhotoDataUrl = null;
+        imagePreviewEl.src = url;
+        imagePreviewWrap.style.display = 'inline-block';
+      }
+    });
+
+    removeImageBtn?.addEventListener('click', () => {
+      currentUploadedPhotoDataUrl = null;
+      if (prodImageFileInput) prodImageFileInput.value = '';
+      if (prodImageUrlInput) prodImageUrlInput.value = '';
+      imagePreviewWrap.style.display = 'none';
+    });
+
+    newProdForm?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('dbProdName').value.trim();
+      const price = parseFloat(document.getElementById('dbProdPrice').value) || 0;
+      let category = prodCategorySelect.value;
+      if (category === 'nueva') {
+        category = prodCategoryCustom.value.trim() || 'varios';
+      }
+      const badge = document.getElementById('dbProdBadge').value.trim();
+      const desc = document.getElementById('dbProdDesc').value.trim();
+      const details = document.getElementById('dbProdDetails').value.trim();
+      const stock = document.getElementById('dbProdStock').checked;
+      const image = currentUploadedPhotoDataUrl || prodImageUrlInput.value.trim() || 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80';
+
+      const res = TavernDB.addProduct({
+        name,
+        price,
+        category,
+        badge,
+        description: desc,
+        details,
+        stock,
+        image
+      });
+
+      if (res.success) {
+        showToast(`✅ Producto "${name}" guardado en la base de datos.`);
+        newProdForm.reset();
+        currentUploadedPhotoDataUrl = null;
+        imagePreviewWrap.style.display = 'none';
+        prodCategoryCustom.style.display = 'none';
+        switchDbTab('inventory');
+      } else {
+        showToast(`❌ Error: ${res.error}`);
+      }
+    });
+
+    // Pestaña 3: Inventario & Reset
+    const invSearchInput = document.getElementById('dbInvSearchInput');
+    invSearchInput?.addEventListener('input', () => {
+      renderDatabaseInventory(invSearchInput.value.toLowerCase().trim());
+    });
+
+    document.getElementById('dbResetDefaultsBtn')?.addEventListener('click', () => {
+      const confirmReset = window.confirm('¿Seguro que querés restablecer la base de datos a los 24 productos oficiales de la taberna? Se perderán las modificaciones no respaldadas.');
+      if (confirmReset) {
+        TavernDB.resetToDefaults();
+        showToast('🔄 Base de datos restablecida a valores oficiales.');
+        renderDatabaseInventory();
+      }
+    });
+
+    // Pestaña 4: Copias de Seguridad
+    document.getElementById('dbExportCSVBtn')?.addEventListener('click', () => {
+      TavernDB.exportToCSV();
+      showToast('📥 Exportando catálogo en CSV compatible con Excel...');
+    });
+
+    document.getElementById('dbExportJSONBtn')?.addEventListener('click', () => {
+      TavernDB.exportToJSON();
+      showToast('📥 Descargando copia de seguridad JSON...');
+    });
+  }
+
+  // Renderizar la tabla de inventario en el modal
+  function renderDatabaseInventory(filterQuery = '') {
+    const tableBody = document.getElementById('dbInventoryTableBody');
+    const badgeCount = document.getElementById('dbInventoryBadge');
+    if (!tableBody) return;
+
+    const allProducts = typeof TavernDB !== 'undefined' ? TavernDB.getProducts() : PRODUCTS;
+    if (badgeCount) badgeCount.textContent = allProducts.length;
+
+    let items = [...allProducts];
+    if (filterQuery) {
+      items = items.filter(p => 
+        p.name.toLowerCase().includes(filterQuery) || 
+        (p.category && p.category.toLowerCase().includes(filterQuery))
+      );
+    }
+
+    if (items.length === 0) {
+      tableBody.innerHTML = `
+        <tr>
+          <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+            No se encontraron productos en el inventario.
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    tableBody.innerHTML = items.map(p => `
+      <tr>
+        <td>
+          <img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.name)}" class="db-table-thumb" onerror="this.src='assets/logo-homero-pizza-transparent.png'">
+        </td>
+        <td style="font-family: monospace; font-size: 0.78rem; color: var(--text-muted);">#${p.id}</td>
+        <td>
+          <strong>${escapeHtml(p.name)}</strong>
+          ${p.badge ? `<br><small style="color: var(--accent-gold); font-weight: 600;">${escapeHtml(p.badge)}</small>` : ''}
+        </td>
+        <td><span class="badge badge-gold-outline" style="font-size: 0.72rem;">${escapeHtml(p.category)}</span></td>
+        <td><strong>${formatMoney(p.price)}</strong></td>
+        <td>
+          <span style="font-size: 0.75rem; font-weight: 700; color: ${p.stock ? 'var(--accent-green)' : '#EF4444'};">
+            ${p.stock ? '● En Stock' : '○ Sin Stock'}
+          </span>
+        </td>
+        <td style="text-align: right;">
+          <button type="button" class="btn-icon-danger" data-db-delete="${p.id}" title="Eliminar de la base de datos">
+            <i class="bi bi-trash3-fill"></i>
+          </button>
+        </td>
+      </tr>
+    `).join('');
+
+    // Eventos de borrado
+    tableBody.querySelectorAll('[data-db-delete]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-db-delete');
+        const prod = TavernDB.getProductById(id);
+        const name = prod ? prod.name : `ID #${id}`;
+        if (window.confirm(`¿Seguro que querés eliminar "${name}" de la base de datos?`)) {
+          TavernDB.deleteProduct(id);
+          showToast(`🗑️ "${name}" eliminado de la base de datos.`);
+          renderDatabaseInventory(filterQuery);
+        }
+      });
     });
   }
 

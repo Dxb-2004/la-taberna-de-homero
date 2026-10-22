@@ -2248,3 +2248,636 @@ body {
     padding-bottom: 70px;
   }
 }
+
+
+/* ==========================================================================
+   14. BOTONES Y MODAL DE BASE DE DATOS Y CARGA DE ARCHIVOS
+   ========================================================================== */
+
+/* Botón en Header */
+.header-db-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border-medium);
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-heading);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.header-db-btn i {
+  color: var(--accent-gold);
+  font-size: 0.95rem;
+}
+
+.header-db-btn:hover {
+  background: var(--bg-subtle);
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Botón en Panel de Catálogo */
+.btn-db-panel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #FFFFFF;
+  color: var(--text-primary);
+  border: 1px solid var(--border-medium);
+  padding: 0.75rem 1.15rem;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-heading);
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+}
+
+.btn-db-panel i {
+  color: var(--accent-gold);
+}
+
+.btn-db-panel:hover {
+  border-color: var(--accent-gold);
+  background: var(--bg-surface);
+  color: var(--accent-gold);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Backdrop Modal Base de Datos */
+.db-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--transition-normal);
+}
+
+.db-modal-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.db-modal-container {
+  background: #FFFFFF;
+  width: 100%;
+  max-width: 880px;
+  max-height: 90vh;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--border-medium);
+  transform: scale(0.96) translateY(12px);
+  transition: transform var(--transition-normal);
+}
+
+.db-modal-backdrop.active .db-modal-container {
+  transform: scale(1) translateY(0);
+}
+
+/* Header del Modal */
+.db-modal-header {
+  padding: 1.5rem 1.75rem 1.25rem;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  background: var(--bg-surface);
+}
+
+.db-modal-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: #FEF3C7;
+  color: #92400E;
+  font-family: var(--font-heading);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-pill);
+  margin-bottom: 0.5rem;
+}
+
+.db-modal-title {
+  font-family: var(--font-display);
+  font-size: 1.85rem;
+  letter-spacing: 0.03em;
+  color: var(--text-primary);
+  margin: 0 0 0.25rem 0;
+  text-transform: uppercase;
+}
+
+.db-modal-subtitle {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* Navegación por Pestañas */
+.db-tabs-nav {
+  display: flex;
+  background: var(--bg-subtle);
+  border-bottom: 1px solid var(--border-medium);
+  padding: 0 1.25rem;
+  gap: 0.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.db-tabs-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.db-tab-btn {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 0.9rem 1rem;
+  font-family: var(--font-heading);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+}
+
+.db-tab-btn i {
+  font-size: 1rem;
+}
+
+.db-tab-btn:hover {
+  color: var(--text-primary);
+}
+
+.db-tab-btn.active {
+  color: var(--accent-gold);
+  border-bottom-color: var(--accent-gold);
+  background: #FFFFFF;
+}
+
+/* Cuerpo del Modal */
+.db-modal-body {
+  padding: 1.5rem 1.75rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.db-tab-pane {
+  display: none;
+}
+
+.db-tab-pane.active {
+  display: block;
+  animation: fadeIn 0.25s ease;
+}
+
+/* PESTAÑA 1: DROPZONE */
+.db-dropzone {
+  border: 2px dashed #CBD5E1;
+  background: var(--bg-surface);
+  border-radius: var(--radius-md);
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.db-dropzone:hover,
+.db-dropzone.dragover {
+  border-color: var(--accent-gold);
+  background: #FFFBEB;
+}
+
+.db-dropzone-icon {
+  font-size: 3rem;
+  color: var(--accent-gold);
+  margin-bottom: 0.75rem;
+}
+
+.db-dropzone-title {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  color: var(--text-primary);
+  margin-bottom: 0.35rem;
+}
+
+.db-dropzone-hint {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 1.25rem;
+}
+
+/* Modos de Importación */
+.db-import-options {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin: 1.25rem 0;
+  padding: 0.85rem 1rem;
+  background: var(--bg-surface);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  flex-wrap: wrap;
+}
+
+.db-options-label {
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.db-radio-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+
+.db-radio-label input {
+  accent-color: var(--accent-gold);
+}
+
+/* Card de Previsualización */
+.db-preview-card {
+  margin-top: 1.25rem;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: #FFFFFF;
+}
+
+.db-preview-header {
+  padding: 0.85rem 1.15rem;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.db-preview-summary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.db-preview-count {
+  background: #E2E8F0;
+  font-size: 0.78rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.db-preview-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.db-preview-table-wrap {
+  max-height: 260px;
+  overflow: auto;
+}
+
+/* Tablas del Gestor */
+.db-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  text-align: left;
+}
+
+.db-table th {
+  background: #F1F5F9;
+  padding: 0.65rem 0.85rem;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-medium);
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.db-table td {
+  padding: 0.65rem 0.85rem;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  vertical-align: middle;
+}
+
+.db-table tr:hover td {
+  background: #FAF8F5;
+}
+
+.db-table-thumb {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-xs);
+  object-fit: cover;
+  border: 1px solid var(--border-subtle);
+}
+
+/* Card de Plantillas */
+.db-templates-card {
+  margin-top: 1.5rem;
+  padding: 1.15rem 1.35rem;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.db-templates-info h5 {
+  margin: 0 0 0.25rem 0;
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.db-templates-info p {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.db-templates-btns {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* PESTAÑA 2: FORMULARIO NUEVO PRODUCTO */
+.db-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.db-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.db-image-inputs {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.35rem;
+}
+
+.db-image-file-box {
+  flex: 1;
+}
+
+.db-image-upload-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--bg-surface);
+  border: 1px dashed #94A3B8;
+  padding: 0.65rem 0.9rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+  width: 100%;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.db-image-upload-trigger:hover {
+  background: #FFFBEB;
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+}
+
+.db-upload-hint {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+.db-image-or {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.db-image-url-box {
+  flex: 1.2;
+}
+
+.db-img-preview-box {
+  margin-top: 0.65rem;
+  position: relative;
+  display: inline-block;
+  width: 80px;
+  height: 80px;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--accent-gold);
+  overflow: hidden;
+}
+
+.db-img-preview-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.db-img-remove-btn {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background: rgba(0, 0, 0, 0.65);
+  color: #FFFFFF;
+  border: none;
+  border-radius: var(--radius-pill);
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.db-form-footer {
+  margin-top: 0.75rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* PESTAÑA 3: INVENTARIO */
+.db-inv-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.db-inv-search {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  padding: 0.45rem 0.75rem;
+  flex: 1;
+  max-width: 380px;
+}
+
+.db-inv-search input {
+  border: none;
+  background: transparent;
+  width: 100%;
+  outline: none;
+  font-size: 0.85rem;
+}
+
+.db-inv-table-wrapper {
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  max-height: 400px;
+  overflow: auto;
+}
+
+.btn-icon-danger {
+  background: transparent;
+  border: none;
+  color: #EF4444;
+  padding: 0.35rem 0.5rem;
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all var(--transition-fast);
+}
+
+.btn-icon-danger:hover {
+  background: #FEE2E2;
+}
+
+/* PESTAÑA 4: COPIA DE SEGURIDAD */
+.db-backup-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+  padding: 1rem 0;
+}
+
+.db-backup-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  padding: 1.75rem 1.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.db-backup-icon-wrap {
+  width: 58px;
+  height: 58px;
+  border-radius: var(--radius-pill);
+  background: #FEF3C7;
+  color: #B45309;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+}
+
+.db-backup-card h4 {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.db-backup-card p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin: 0 0 0.5rem 0;
+  line-height: 1.45;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .header-db-btn .db-btn-text {
+    display: none;
+  }
+
+  .header-db-btn {
+    padding: 0.45rem 0.6rem;
+  }
+
+  .db-form-grid,
+  .db-backup-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .db-image-inputs {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .db-image-or {
+    text-align: center;
+  }
+
+  .db-modal-header {
+    padding: 1.15rem 1.25rem;
+  }
+
+  .db-modal-body {
+    padding: 1.15rem 1.25rem;
+  }
+}

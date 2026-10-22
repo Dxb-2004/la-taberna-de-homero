@@ -30,15 +30,13 @@ const STORE_CONFIG = {
   bannerImage: "https://cdn.catalog-store.link/5f74c93c397c4390f095a906e1c4f458_image.jpg"
 };
 
-const CATEGORIES = [
+const DEFAULT_CATEGORIES = [
   { id: "all", name: "🔥 Todos", icon: "bi-grid-fill" },
   { id: "combos", name: "🍸 Combos Previas", icon: "bi-cup-straw", badge: "Más Vendido" },
-  { id: "snacks", name: "🍟 Snacks & Quentos", icon: "bi-box2-heart-fill", badge: "20+ Sabores" },
-  { id: "cervezas", name: "🍺 Cervezas Heladas", icon: "bi-droplet-half", badge: "Bien Frías" },
-  { id: "pizzas", name: "🍕 Pizzas Listas", icon: "bi-pie-chart-fill", badge: "Para el Horno" },
-  { id: "vinos", name: "🍷 Vinos", icon: "bi-flower1" },
-  { id: "gaseosas", name: "🥤 Gaseosas & Hielos", icon: "bi-snow" }
+  { id: "snacks", name: "🍟 Snacks & Quentos", icon: "bi-box2-heart-fill", badge: "Línea Quentos" }
 ];
+
+let CATEGORIES = [...DEFAULT_CATEGORIES];
 
 const HOMER_QUOTES = [
   "«¡Por el alcohol: la causa y la solución de todos los problemas de la vida!» 🍻",
@@ -50,7 +48,7 @@ const HOMER_QUOTES = [
   "«Moe, una ronda para todos y unos conos de queso para llevar.» 🤠"
 ];
 
-const PRODUCTS = [
+const DEFAULT_PRODUCTS = [
   // --- COMBOS PARA LA PREVIA (De la tienda oficial) ---
   {
     id: 1,
@@ -341,157 +339,28 @@ const PRODUCTS = [
     details: ["Tortillas de maíz tostadas", "Queso cheddar audaz", "El snack legendario"],
     stock: true,
     tags: ["doritos", "nachos", "queso", "snacks"]
-  },
-
-  // --- CERVEZAS HELADAS DE LA TABERNA ---
-  {
-    id: 25,
-    name: "Cerveza Duff Helada 710cc",
-    category: "cervezas",
-    price: 4500,
-    badge: "🍻 Exclusiva Taberna",
-    image: "https://images.unsplash.com/photo-1608270191993-9c595781604a?w=600&auto=format&fit=crop&q=80",
-    description: "La cerveza oficial de Homero y Moe. Rubia, refrescante, con espuma cremosa y bien fría de heladera. ¡No podés pasar por la taberna sin tomarte una Duff!",
-    details: ["Botella 710cc retornable o descartable", "Rubia estilo lager clásica", "Servida a temperatura bajo cero"],
-    stock: true,
-    tags: ["cerveza", "duff", "homero", "rubia", "helada"]
-  },
-  {
-    id: 26,
-    name: "Quilmes Clásica 1 Litro",
-    category: "cervezas",
-    price: 3800,
-    badge: "🇦🇷 La Clásica",
-    image: "https://images.unsplash.com/photo-1535958636474-b021ee887b13?w=600&auto=format&fit=crop&q=80",
-    description: "El clásico argentino que reúne a los amigos en la vereda. Rubia dorada, balanceada y helada para combatir el calor de Bahía Blanca.",
-    details: ["Botella 1 Litro", "Graduación 4.9%", "Lista para destapar"],
-    stock: true,
-    tags: ["cerveza", "quilmes", "litro", "helada"]
-  },
-  {
-    id: 27,
-    name: "Heineken Botella 1 Litro",
-    category: "cervezas",
-    price: 4900,
-    badge: "⭐ Calidad Premium",
-    image: "https://images.unsplash.com/photo-1618886614638-80e3c103d31a?w=600&auto=format&fit=crop&q=80",
-    description: "Cerveza holandesa 100% malta pura. Sabor nítido, lúpulo aromático y amargor refrescante en presentación familiar de 1 litro.",
-    details: ["Botella 1 Litro", "100% pura malta", "Súper helada"],
-    stock: true,
-    tags: ["cerveza", "heineken", "litro", "premium"]
-  },
-  {
-    id: 28,
-    name: "Corona Extra 710cc + Limón",
-    category: "cervezas",
-    price: 5200,
-    badge: "🏖️ Con Limón Fresco",
-    image: "https://images.unsplash.com/photo-1518176258769-f227c798150e?w=600&auto=format&fit=crop&q=80",
-    description: "Cerveza rubia mexicana suave y ultra cristalina. Viene con rodajas de limón fresco de regalo para ponerle en el pico.",
-    details: ["Botella 710cc", "Incluye limón fresco", "Liviana y veraniega"],
-    stock: true,
-    tags: ["cerveza", "corona", "limon", "helada"]
-  },
-
-  // --- PIZZAS LISTAS PARA EL HORNO ---
-  {
-    id: 29,
-    name: "Pizza Muzzarella Especial (Lista para el Horno)",
-    category: "pizzas",
-    price: 9500,
-    badge: "🍕 Más Pedida",
-    image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&auto=format&fit=crop&q=80",
-    description: "Pizza lista para el horno. Salsa de tomates maduros condimentada con orégano silvestre, 350g de abundante muzzarella fundida y aceitunas negras.",
-    details: ["8 porciones grandes", "350g queso muzzarella", "Lista para el horno"],
-    stock: true,
-    tags: ["pizza", "muzzarella", "lista para el horno", "cena"]
-  },
-  {
-    id: 30,
-    name: "Pizza Napolitana con Ajo (Lista para el Horno)",
-    category: "pizzas",
-    price: 11000,
-    badge: "🍅 Tomate Fresco",
-    image: "https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?w=600&auto=format&fit=crop&q=80",
-    description: "Generosa muzzarella con rodajas finas de tomates frescos seleccionados, provenzal y hojas de albahaca fresca. Lista para hornear en minutos.",
-    details: ["8 porciones", "Tomates frescos y provenzal", "Lista para el horno"],
-    stock: true,
-    tags: ["pizza", "napolitana", "ajo", "lista para el horno"]
-  },
-  {
-    id: 31,
-    name: "Pizza Fugazzeta Rellena (Lista para el Horno)",
-    category: "pizzas",
-    price: 12500,
-    badge: "🧅 Doble Queso",
-    image: "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=600&auto=format&fit=crop&q=80",
-    description: "Cebollas doradas y caramelizadas a la perfección sobre un colchón descomunal de muzzarella derretida y queso parmesano gratinado. Lista para hornear.",
-    details: ["8 porciones", "Doble piso de muzzarella", "Lista para el horno"],
-    stock: true,
-    tags: ["pizza", "fugazzeta", "cebolla", "lista para el horno"]
-  },
-
-  // --- VINOS DE BODEGA ---
-  {
-    id: 32,
-    name: "Vino Cafayate Malbec 750ml",
-    category: "vinos",
-    price: 5800,
-    badge: "🍷 Salta",
-    image: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=600&auto=format&fit=crop&q=80",
-    description: "Malbec de los Valles Calchaquíes de Salta. Frutado, intenso, con notas a ciruelas y vainilla. El compañero fiel de una buena pizza o picada.",
-    details: ["Botella 750ml", "100% Malbec", "Temperatura sugerida: 16-18°C"],
-    stock: true,
-    tags: ["vino", "malbec", "cafayate", "tinto"]
-  },
-  {
-    id: 33,
-    name: "Vino Finca Las Moras Cabernet Sauvignon",
-    category: "vinos",
-    price: 6200,
-    badge: "🍇 San Juan",
-    image: "https://images.unsplash.com/photo-1553361371-9b22f78e8b1d?w=600&auto=format&fit=crop&q=80",
-    description: "Cabernet sanjuanino con carácter, notas a pimiento rojo dulce, pimienta y final persistente en boca. Gran vino para compartir.",
-    details: ["Botella 750ml", "Cabernet Sauvignon", "Bodega Las Moras"],
-    stock: true,
-    tags: ["vino", "cabernet", "tinto", "lasmoras"]
-  },
-
-  // --- GASEOSAS Y AGUAS ---
-  {
-    id: 34,
-    name: "Coca-Cola Original 1.5 Litros",
-    category: "gaseosas",
-    price: 3300,
-    badge: "❄️ Bien Fría",
-    image: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=600&auto=format&fit=crop&q=80",
-    description: "Coca-Cola sabor original en botella de 1.5 litros. Servida a temperatura de heladera para acompañar tus comidas y tragos.",
-    details: ["Botella descartable 1.5L", "Fría de cámara", "Gas perfecto"],
-    stock: true,
-    tags: ["coca", "gaseosa", "bebidas", "coca-cola"]
-  },
-  {
-    id: 35,
-    name: "Sprite Lima-Limón 1.5 Litros",
-    category: "gaseosas",
-    price: 3300,
-    badge: "🍋 Lima Limón",
-    image: "https://images.unsplash.com/photo-1625772299848-391b6a87d7b3?w=600&auto=format&fit=crop&q=80",
-    description: "La gaseosa lima-limón más refrescante. Ideal para mezclar con vino blanco, aperitivos o disfrutar sola bien helada.",
-    details: ["Botella 1.5L", "Sabor lima-limón", "Ultra refrescante"],
-    stock: true,
-    tags: ["sprite", "gaseosa", "lima", "bebidas"]
-  },
-  {
-    id: 36,
-    name: "Bolsa de Hielo Rolito 3kg",
-    category: "gaseosas",
-    price: 1800,
-    badge: "🧊 Indispensable",
-    image: "https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80",
-    description: "Hielo de agua purificada en rolitos macizos de larga duración. No te quedes sin hielo en medio de la previa.",
-    details: ["Bolsa reforzada 3kg", "Rolitos macizos de larga duración", "Congelado seco"],
-    stock: true,
-    tags: ["hielo", "rolito", "previa", "tragos"]
   }
 ];
+
+// Instancia reactiva de productos (conectada a TavernDB en js/database.js)
+let PRODUCTS = [...DEFAULT_PRODUCTS];
+
+// Función para sincronizar categorías según los productos actuales
+function getDynamicCategories() {
+  const baseMap = new Map();
+  DEFAULT_CATEGORIES.forEach(c => baseMap.set(c.id, { ...c }));
+
+  // Detectar categorías adicionales que vengan en los productos importados
+  PRODUCTS.forEach(p => {
+    if (p.category && !baseMap.has(p.category)) {
+      const cleanName = p.category.charAt(0).toUpperCase() + p.category.slice(1);
+      baseMap.set(p.category, {
+        id: p.category,
+        name: `📦 ${cleanName}`,
+        icon: "bi-tag-fill"
+      });
+    }
+  });
+
+  return Array.from(baseMap.values());
+}
