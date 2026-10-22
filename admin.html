@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Panel de Administración 🍻 | La Taberna de Homero</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/png" href="assets/logo-homero-pizza-transparent.png">
+
+  <!-- Tipografías Oficiales de la Taberna -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="admin-body">
+
+  <!-- BARRA DE NAVEGACIÓN SUPERIOR -->
+  <header class="admin-navbar">
+    <div class="admin-nav-container">
+      <a href="admin.html" class="admin-brand">
+        <img src="assets/logo-homero-pizza.svg" 
+             alt="Logo La Taberna de Homero" 
+             class="admin-logo"
+             onerror="this.src='assets/logo-homero-pizza-transparent.png'">
+        <div class="admin-brand-info">
+          <h1>LA TABERNA DE HOMERO</h1>
+          <span class="admin-badge-pill">
+            <i class="bi bi-shield-check"></i> PANEL DE CONTROL
+          </span>
+        </div>
+      </a>
+
+      <div class="admin-nav-actions">
+        <a href="index.html" class="btn-nav-action btn-view-store" title="Ir a la tienda de clientes">
+          <i class="bi bi-shop"></i>
+          <span>Ver Tienda</span>
+        </a>
+        <button type="button" class="btn-nav-action btn-admin-logout" id="adminLogoutBtn" title="Cerrar sesión de administrador">
+          <i class="bi bi-box-arrow-right"></i>
+          <span>Salir</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- PANTALLA 1: ACCESO POR CONTRASEÑA (LOGIN) -->
+  <section class="admin-login-screen" id="adminLoginSection" style="display: none;">
+    <div class="admin-auth-card">
+      <div class="admin-auth-icon">
+        <i class="bi bi-shield-lock-fill"></i>
+      </div>
+      <h2 class="admin-auth-title">Acceso Administrador</h2>
+      <p class="admin-auth-desc">Ingresá tu clave para gestionar los productos, precios y fotos de La Taberna desde cualquier celular o PC.</p>
+
+      <form id="adminLoginForm">
+        <div class="form-group" style="text-align: left; margin-bottom: 1.25rem;">
+          <label for="adminPasswordInput" style="font-weight: 700; font-size: 0.85rem; margin-bottom: 0.4rem; display: block;">Contraseña</label>
+          <div class="admin-password-field-wrap">
+            <input type="password" 
+                   id="adminPasswordInput" 
+                   class="form-input admin-password-input" 
+                   placeholder="Ingresá la clave..." 
+                   autocomplete="current-password" 
+                   required>
+            <button type="button" class="btn-toggle-password" id="togglePasswordBtn" title="Mostrar/Ocultar" aria-label="Mostrar contraseña">
+              <i class="bi bi-eye" id="togglePasswordIcon"></i>
+            </button>
+          </div>
+          <div class="admin-error-msg" id="adminLoginError" style="display: none;">
+            <i class="bi bi-exclamation-triangle-fill"></i> Clave incorrecta. Intentá nuevamente.
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.85rem;">
+          <i class="bi bi-unlock-fill"></i> Ingresar al Panel
+        </button>
+
+        <div style="margin-top: 1.5rem;">
+          <a href="index.html" style="font-size: 0.85rem; color: #6B7280; text-decoration: none; font-weight: 600;">
+            ← Volver a la tienda
+          </a>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- PANTALLA 2: DASHBOARD DE ADMINISTRACIÓN -->
+  <main class="admin-main-wrap" id="adminDashboardSection" style="display: none;">
+
+    <!-- Estadísticas Rápidas -->
+    <div class="admin-stats-strip">
+      <div class="stat-chip">
+        <div class="stat-chip-icon">
+          <i class="bi bi-box-seam-fill"></i>
+        </div>
+        <div class="stat-chip-info">
+          <span class="stat-chip-val" id="statTotalProds">0</span>
+          <span class="stat-chip-lbl">Productos</span>
+        </div>
+      </div>
+
+      <div class="stat-chip">
+        <div class="stat-chip-icon">
+          <i class="bi bi-tags-fill"></i>
+        </div>
+        <div class="stat-chip-info">
+          <span class="stat-chip-val" id="statTotalCats">0</span>
+          <span class="stat-chip-lbl">Categorías</span>
+        </div>
+      </div>
+
+      <div class="stat-chip">
+        <div class="stat-chip-icon">
+          <i class="bi bi-exclamation-circle-fill"></i>
+        </div>
+        <div class="stat-chip-info">
+          <span class="stat-chip-val" id="statOutOfStock">0</span>
+          <span class="stat-chip-lbl">Sin Stock</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pestañas de Navegación (Visible en tablets/escritorio) -->
+    <nav class="admin-desktop-tabs" aria-label="Secciones de administración">
+      <button type="button" class="admin-tab-btn active" data-tab="inventory">
+        <i class="bi bi-table"></i>
+        <span>Inventario</span>
+      </button>
+      <button type="button" class="admin-tab-btn" data-tab="new-product">
+        <i class="bi bi-plus-circle-fill"></i>
+        <span>Nuevo Producto</span>
+      </button>
+      <button type="button" class="admin-tab-btn" data-tab="upload">
+        <i class="bi bi-cloud-arrow-up-fill"></i>
+        <span>Cargar Archivo</span>
+      </button>
+      <button type="button" class="admin-tab-btn" data-tab="backup">
+        <i class="bi bi-shield-check"></i>
+        <span>Respaldos & Plantillas</span>
+      </button>
+      <button type="button" class="admin-tab-btn" data-tab="security">
+        <i class="bi bi-key-fill"></i>
+        <span>Contraseña</span>
+      </button>
+    </nav>
+
+    <!-- PANEL 1: INVENTARIO ACTUAL -->
+    <section class="admin-panel-card" id="paneInventory">
+      <div class="admin-panel-header">
+        <div>
+          <h2><i class="bi bi-boxes"></i> Inventario de Productos</h2>
+          <p>Buscá, cambiá el stock en vivo o eliminá productos de la tienda.</p>
+        </div>
+        <button type="button" class="btn btn-outline btn-sm text-danger" id="adminResetDefaultsBtn" title="Restablecer valores de fábrica">
+          <i class="bi bi-arrow-counterclockwise"></i> Valores Originales
+        </button>
+      </div>
+
+      <!-- Filtros y Búsqueda -->
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap;">
+        <div class="search-input-group" style="flex: 1; min-width: 220px;">
+          <i class="bi bi-search search-icon"></i>
+          <input type="text" id="adminSearchInput" class="search-field" placeholder="Buscar por nombre o categoría...">
+        </div>
+        <select id="adminCategoryFilter" class="sort-dropdown" style="min-width: 150px;">
+          <option value="all">Todas las categorías</option>
+          <option value="combos">Combos</option>
+          <option value="snacks">Snacks</option>
+          <option value="cervezas">Cervezas</option>
+          <option value="pizzas">Pizzas</option>
+          <option value="vinos">Vinos</option>
+          <option value="gaseosas">Gaseosas</option>
+        </select>
+      </div>
+
+      <!-- Lista Móvil de Productos -->
+      <div class="mobile-inventory-list" id="adminInventoryList">
+        <!-- Render dinámico con js/admin.js -->
+      </div>
+    </section>
+
+    <!-- PANEL 2: NUEVO PRODUCTO (CARGA MANUAL + CÁMARA DE CELULAR) -->
+    <section class="admin-panel-card" id="paneNewProduct" style="display: none;">
+      <div class="admin-panel-header">
+        <div>
+          <h2><i class="bi bi-plus-circle-fill"></i> Agregar Producto</h2>
+          <p>Cargá un producto nuevo y sacale una foto con la cámara del celular.</p>
+        </div>
+      </div>
+
+      <form id="adminNewProductForm" class="db-form">
+        <!-- Toma de Foto con Cámara Móvil -->
+        <div class="mobile-camera-capture-box">
+          <label class="mobile-camera-btn-label">
+            <i class="bi bi-camera-fill"></i> Tomar Foto o Subir Imagen
+            <input type="file" id="mobileCameraInput" accept="image/*" capture="environment" style="display: none;">
+          </label>
+          <div style="font-size: 0.75rem; color: #6B7280; margin-top: 0.5rem;">
+            Formatos: JPG, PNG, WEBP. Se optimiza automáticamente en tu celular.
+          </div>
+
+          <div style="margin: 0.75rem auto 0; max-width: 380px;">
+            <input type="url" id="adminProdUrlInput" class="form-input" placeholder="O pegar enlace web de imagen (https://...)">
+          </div>
+
+          <!-- Previsualizador de foto -->
+          <div class="db-img-preview-box" id="adminImagePreviewWrap" style="display: none; margin: 0.75rem auto 0;">
+            <img id="adminImagePreview" src="" alt="Previsualización">
+            <button type="button" class="db-img-remove-btn" id="adminRemoveImgBtn" title="Quitar foto">&times;</button>
+          </div>
+        </div>
+
+        <div class="db-form-grid">
+          <div class="form-group">
+            <label for="adminProdName">Nombre del Producto <span class="required">*</span></label>
+            <input type="text" id="adminProdName" class="form-input" placeholder="Ej: Pizza Napolitana Especial" required>
+          </div>
+
+          <div class="form-group">
+            <label for="adminProdCategory">Categoría <span class="required">*</span></label>
+            <select id="adminProdCategory" class="form-input">
+              <option value="combos">🍸 Combos Previas</option>
+              <option value="snacks">🍟 Snacks & Quentos</option>
+              <option value="cervezas">🍻 Cervezas</option>
+              <option value="pizzas">🍕 Pizzas</option>
+              <option value="vinos">🍷 Vinos</option>
+              <option value="gaseosas">🥤 Gaseosas & Hielo</option>
+              <option value="nueva">+ Crear nueva categoría...</option>
+            </select>
+            <input type="text" id="adminProdCategoryCustom" class="form-input" placeholder="Nombre de la nueva categoría" style="display: none; margin-top: 8px;">
+          </div>
+
+          <div class="form-group">
+            <label for="adminProdPrice">Precio en Pesos ($) <span class="required">*</span></label>
+            <input type="number" id="adminProdPrice" class="form-input" min="0" step="50" placeholder="Ej: 4500" required>
+          </div>
+
+          <div class="form-group">
+            <label for="adminProdBadge">Etiqueta Destacada (Opcional)</label>
+            <input type="text" id="adminProdBadge" class="form-input" placeholder="Ej: 🔥 Más Vendido, ❄️ Bien Fría">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="adminProdDesc">Descripción</label>
+          <textarea id="adminProdDesc" class="form-input" rows="2" placeholder="Detalle tentador del producto..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="adminProdDetails">Características o viñetas (separadas por barra | o coma)</label>
+          <input type="text" id="adminProdDetails" class="form-input" placeholder="Ej: Bien fría | Botella 1 Litro | Lista para disfrutar">
+        </div>
+
+        <div class="form-row-checkbox">
+          <label class="custom-checkbox">
+            <input type="checkbox" id="adminProdStock" checked>
+            <span class="checkmark"></span>
+            <span class="checkbox-text">Producto con stock disponible para la venta</span>
+          </label>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.85rem; font-size: 1rem;">
+          <i class="bi bi-check-circle-fill"></i> Guardar Producto en Catálogo
+        </button>
+      </form>
+    </section>
+
+    <!-- PANEL 3: CARGAR ARCHIVOS (CSV / JSON) -->
+    <section class="admin-panel-card" id="paneUpload" style="display: none;">
+      <div class="admin-panel-header">
+        <div>
+          <h2><i class="bi bi-file-earmark-spreadsheet"></i> Cargar Archivos</h2>
+          <p>Importá planillas CSV o archivos JSON con tu lista de productos completa.</p>
+        </div>
+      </div>
+
+      <div class="db-dropzone" id="adminDropzone">
+        <input type="file" id="adminFileInput" accept=".csv, .json, text/csv, application/json" style="display: none;">
+        <div class="db-dropzone-icon">
+          <i class="bi bi-cloud-arrow-up-fill"></i>
+        </div>
+        <h4 class="db-dropzone-title">Tocá acá para seleccionar tu archivo</h4>
+        <p class="db-dropzone-hint">Formatos soportados: <strong>.CSV</strong> de Excel o <strong>.JSON</strong></p>
+        <button type="button" class="btn btn-outline btn-sm">
+          <i class="bi bi-folder2-open"></i> Explorar Archivo en el Dispositivo
+        </button>
+      </div>
+
+      <!-- Opciones de importación -->
+      <div class="db-import-options">
+        <span class="db-options-label">Modo:</span>
+        <label class="db-radio-label">
+          <input type="radio" name="adminImportMode" value="append" checked>
+          <span><strong>Añadir</strong> a los productos actuales</span>
+        </label>
+        <label class="db-radio-label">
+          <input type="radio" name="adminImportMode" value="replace">
+          <span><strong>Reemplazar</strong> catálogo completo</span>
+        </label>
+      </div>
+
+      <!-- Previsualización -->
+      <div class="db-preview-card" id="adminPreviewCard" style="display: none;">
+        <div class="db-preview-header">
+          <div class="db-preview-summary" id="adminPreviewSummary">
+            0 productos detectados
+          </div>
+          <div class="db-preview-actions">
+            <button type="button" class="btn btn-sm btn-ghost" id="adminCancelImportBtn">Cancelar</button>
+            <button type="button" class="btn btn-sm btn-primary" id="adminConfirmImportBtn">
+              <i class="bi bi-box-arrow-in-down"></i> Importar a la Base de Datos
+            </button>
+          </div>
+        </div>
+        <div class="db-preview-table-wrap">
+          <table class="db-table">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Categoría</th>
+                <th>Precio</th>
+              </tr>
+            </thead>
+            <tbody id="adminPreviewTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Plantillas -->
+      <div class="db-templates-card">
+        <div class="db-templates-info">
+          <h5>¿Querés una plantilla para armar tus precios en Excel?</h5>
+          <p>Descargá un modelo listo para abrir en tu celular o computadora.</p>
+        </div>
+        <div class="db-templates-btns">
+          <button type="button" class="btn btn-secondary btn-sm" id="adminDownloadCSVTemplateBtn">
+            <i class="bi bi-filetype-csv"></i> Descargar Plantilla CSV
+          </button>
+          <button type="button" class="btn btn-ghost btn-sm" id="adminDownloadJSONTemplateBtn">
+            <i class="bi bi-filetype-json"></i> Plantilla JSON
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANEL 4: RESPALDOS Y PLANTILLAS -->
+    <section class="admin-panel-card" id="paneBackup" style="display: none;">
+      <div class="admin-panel-header">
+        <div>
+          <h2><i class="bi bi-shield-check"></i> Respaldos & Copias de Seguridad</h2>
+          <p>Descargá copias de seguridad de tu catálogo o compartí listas de precios.</p>
+        </div>
+      </div>
+
+      <div class="db-backup-cards-grid">
+        <div class="db-backup-card">
+          <div class="db-backup-icon-wrap">
+            <i class="bi bi-file-earmark-spreadsheet-fill"></i>
+          </div>
+          <h4>Exportar para Excel (.CSV)</h4>
+          <p>Descargá una planilla de cálculo con todos los productos actuales, compatible con Microsoft Excel y Google Sheets con acentos incluidos.</p>
+          <button type="button" class="btn btn-primary btn-sm" id="adminExportCSVBtn">
+            <i class="bi bi-download"></i> Descargar Planilla CSV
+          </button>
+        </div>
+
+        <div class="db-backup-card">
+          <div class="db-backup-icon-wrap">
+            <i class="bi bi-filetype-json"></i>
+          </div>
+          <h4>Copia de Seguridad (.JSON)</h4>
+          <p>Exportá la base de datos completa de tu tienda en formato JSON estándar para respaldo o migración entre dispositivos.</p>
+          <button type="button" class="btn btn-secondary btn-sm" id="adminExportJSONBtn">
+            <i class="bi bi-download"></i> Descargar Archivo JSON
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANEL 5: SEGURIDAD Y CAMBIO DE CONTRASEÑA -->
+    <section class="admin-panel-card" id="paneSecurity" style="display: none;">
+      <div class="admin-panel-header">
+        <div>
+          <h2><i class="bi bi-key-fill"></i> Seguridad & Contraseña</h2>
+          <p>Cambiá la clave de acceso a este panel de administración.</p>
+        </div>
+      </div>
+
+      <form id="adminChangePassForm" class="db-form" style="max-width: 440px; margin: 0 auto;">
+        <div class="form-group">
+          <label for="adminCurrentPassInput">Contraseña Actual <span class="required">*</span></label>
+          <input type="password" id="adminCurrentPassInput" class="form-input" placeholder="Ingresá la clave actual" required>
+        </div>
+
+        <div class="form-group">
+          <label for="adminNewPassInput">Nueva Contraseña <span class="required">*</span></label>
+          <input type="password" id="adminNewPassInput" class="form-input" minlength="4" placeholder="Mínimo 4 caracteres" required>
+        </div>
+
+        <div class="form-group">
+          <label for="adminConfirmPassInput">Confirmar Nueva Contraseña <span class="required">*</span></label>
+          <input type="password" id="adminConfirmPassInput" class="form-input" minlength="4" placeholder="Repetí la nueva clave" required>
+        </div>
+
+        <div class="admin-error-msg" id="adminChangePassError" style="display: none; margin-bottom: 0.75rem;"></div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.85rem;">
+          <i class="bi bi-check2-circle"></i> Guardar Nueva Contraseña
+        </button>
+      </form>
+    </section>
+
+  </main>
+
+  <!-- BARRA DE NAVEGACIÓN INFERIOR PARA CELULARES (1-Thumb Navigation) -->
+  <nav class="admin-mobile-dock" aria-label="Navegación móvil de administración">
+    <div class="admin-mobile-dock-inner">
+      <button type="button" class="admin-dock-item active" data-tab="inventory">
+        <i class="bi bi-table"></i>
+        <span>Inventario</span>
+      </button>
+      <button type="button" class="admin-dock-item" data-tab="new-product">
+        <i class="bi bi-plus-circle-fill"></i>
+        <span>Nuevo</span>
+      </button>
+      <button type="button" class="admin-dock-item" data-tab="upload">
+        <i class="bi bi-cloud-arrow-up-fill"></i>
+        <span>Cargar</span>
+      </button>
+      <button type="button" class="admin-dock-item" data-tab="backup">
+        <i class="bi bi-shield-check"></i>
+        <span>Respaldos</span>
+      </button>
+      <button type="button" class="admin-dock-item" data-tab="security">
+        <i class="bi bi-key-fill"></i>
+        <span>Clave</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- SHELF DE TOASTS -->
+  <div class="toast-shelf" id="toastContainer"></div>
+
+  <!-- Scripts -->
+  <script src="js/products.js"></script>
+  <script src="js/database.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

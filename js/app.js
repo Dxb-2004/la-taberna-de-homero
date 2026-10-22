@@ -851,6 +851,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Click en el enlace discreto del footer
     openAdminLink?.addEventListener('click', (e) => {
+      // En dispositivos móviles (celulares y tablets <= 768px), navegar a la app móvil admin.html
+      if (window.innerWidth <= 768) {
+        return; // Permite navegación nativa a admin.html
+      }
       e.preventDefault();
       triggerAdminAccess('upload');
     });
