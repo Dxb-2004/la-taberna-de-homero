@@ -35,7 +35,7 @@ const CATEGORIES = [
   { id: "combos", name: "🍸 Combos Previas", icon: "bi-cup-straw", badge: "Más Vendido" },
   { id: "snacks", name: "🍟 Snacks & Quentos", icon: "bi-box2-heart-fill", badge: "20+ Sabores" },
   { id: "cervezas", name: "🍺 Cervezas Heladas", icon: "bi-droplet-half", badge: "Bien Frías" },
-  { id: "pizzas", name: "🍕 Pizzas de la Casa", icon: "bi-pie-chart-fill", badge: "Al Horno" },
+  { id: "pizzas", name: "🍕 Pizzas Listas", icon: "bi-pie-chart-fill", badge: "Para el Horno" },
   { id: "vinos", name: "🍷 Vinos", icon: "bi-flower1" },
   { id: "gaseosas", name: "🥤 Gaseosas & Hielos", icon: "bi-snow" }
 ];
@@ -393,42 +393,42 @@ const PRODUCTS = [
     tags: ["cerveza", "corona", "limon", "helada"]
   },
 
-  // --- PIZZAS CASERAS DE LA TABERNA ---
+  // --- PIZZAS LISTAS PARA EL HORNO ---
   {
     id: 29,
-    name: "Pizza Muzzarella Especial de la Taberna",
+    name: "Pizza Muzzarella Especial (Lista para el Horno)",
     category: "pizzas",
     price: 9500,
     badge: "🍕 Más Pedida",
     image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&auto=format&fit=crop&q=80",
-    description: "Masa artesanal a la piedra, salsa de tomates maduros condimentada con orégano silvestre, 350g de abundante muzzarella fundida y aceitunas negras.",
-    details: ["8 porciones grandes", "350g queso muzzarella", "Masa casera crocante"],
+    description: "Pizza lista para el horno. Salsa de tomates maduros condimentada con orégano silvestre, 350g de abundante muzzarella fundida y aceitunas negras.",
+    details: ["8 porciones grandes", "350g queso muzzarella", "Lista para el horno"],
     stock: true,
-    tags: ["pizza", "muzzarella", "casera", "cena"]
+    tags: ["pizza", "muzzarella", "lista para el horno", "cena"]
   },
   {
     id: 30,
-    name: "Pizza Napolitana con Ajo y Albahaca",
+    name: "Pizza Napolitana con Ajo (Lista para el Horno)",
     category: "pizzas",
     price: 11000,
     badge: "🍅 Tomate Fresco",
     image: "https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?w=600&auto=format&fit=crop&q=80",
-    description: "Generosa muzzarella con rodajas finas de tomates frescos seleccionados, lluvia de provenzal (ajo suave y perejil fresco) y hojas de albahaca.",
-    details: ["8 porciones", "Tomates frescos y provenzal", "Toque de aceite de oliva"],
+    description: "Generosa muzzarella con rodajas finas de tomates frescos seleccionados, provenzal y hojas de albahaca fresca. Lista para hornear en minutos.",
+    details: ["8 porciones", "Tomates frescos y provenzal", "Lista para el horno"],
     stock: true,
-    tags: ["pizza", "napolitana", "ajo", "albahaca"]
+    tags: ["pizza", "napolitana", "ajo", "lista para el horno"]
   },
   {
     id: 31,
-    name: "Pizza Fugazzeta Rellena de Queso",
+    name: "Pizza Fugazzeta Rellena (Lista para el Horno)",
     category: "pizzas",
     price: 12500,
     badge: "🧅 Doble Queso",
     image: "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=600&auto=format&fit=crop&q=80",
-    description: "Cebollas doradas y caramelizadas a la perfección sobre un colchón descomunal de muzzarella derretida y queso parmesano gratinado.",
-    details: ["8 porciones", "Doble piso de muzzarella", "Cebolla caramelizada"],
+    description: "Cebollas doradas y caramelizadas a la perfección sobre un colchón descomunal de muzzarella derretida y queso parmesano gratinado. Lista para hornear.",
+    details: ["8 porciones", "Doble piso de muzzarella", "Lista para el horno"],
     stock: true,
-    tags: ["pizza", "fugazzeta", "cebolla", "queso"]
+    tags: ["pizza", "fugazzeta", "cebolla", "lista para el horno"]
   },
 
   // --- VINOS DE BODEGA ---

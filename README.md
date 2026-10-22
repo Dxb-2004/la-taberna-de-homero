@@ -18,11 +18,11 @@ Diseño artesanal, auténtico y con carácter de cervecería independiente (insp
 ### 2. 🍔 Catálogo Completo & Interactivo
 * **Combos de Previa:** Fernet Branca 450cc + Coca-Cola 1.5L ($15.800), Blu + Manaos Tónica ($20.000), Combo Gancia + Sprite ($11.600), Combo Campari + Cepita 1L ($12.500) y Fernet 1882 + Coca ($11.000).
 * **Snacks & Línea Quentos ($2.200 c/u):** Toda la variedad de papas y nachos (Guacamole, Conos de Queso, Nachos, Crema & Ciboulette, Jamón Serrano, Mostaza, Limón, Asado Criollo, Mega Queso, Palitos Nikitos, Papas Pay, Batatas Rústicas/Crunch, BBQ, Ketchup, Conitos 3D y Doritos Queso).
-* **Especialidades de la Casa:** Cerveza Duff helada, Quilmes, Heineken, Corona con limón, Pizzas artesanales a la piedra, Vinos y bolsas de hielo rolito.
+* **Especialidades de la Casa:** Cerveza Duff helada, Quilmes, Heineken, Corona con limón, Pizzas listas para el horno, Vinos y bolsas de hielo rolito.
 
 ### 3. 🔍 Búsqueda Reactiva & Filtros
 * Buscador en tiempo real por producto o ingrediente con atajo de teclado (`Ctrl + K`).
-* Pestañas de categorías con contador dinámico en tiempo real (`🔥 Todos`, `🍸 Combos Previas`, `🍟 Snacks & Quentos`, `🍺 Cervezas Heladas`, `🍕 Pizzas Caseras`, `🍷 Vinos`, `🥤 Gaseosas & Hielos`).
+* Pestañas de categorías con contador dinámico en tiempo real (`🔥 Todos`, `🍸 Combos Previas`, `🍟 Snacks & Quentos`, `🍺 Cervezas Heladas`, `🍕 Pizzas Listas`, `🍷 Vinos`, `🥤 Gaseosas & Hielos`).
 * Selector de ordenamiento: Destacados, Menor precio, Mayor precio y A-Z.
 
 ### 4. 🛒 Carrito de Compras & Checkout WhatsApp (Sistema Levels)
