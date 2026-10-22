@@ -644,14 +644,15 @@ document.addEventListener('DOMContentLoaded', () => {
         closeCart();
         closeProductModal();
         document.getElementById('databaseModalBackdrop')?.classList.remove('active');
+        document.getElementById('adminLoginModalBackdrop')?.classList.remove('active');
       }
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
         e.preventDefault();
         searchInput.focus();
       }
-      if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
+      if ((e.ctrlKey || e.metaKey) && e.altKey && (e.key === 'a' || e.key === 'A')) {
         e.preventDefault();
-        document.getElementById('openDbBtn')?.click();
+        document.getElementById('openAdminLink')?.click();
       }
     });
 
@@ -752,36 +753,147 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // --- GESTOR DE BASE DE DATOS Y CARGA DE ARCHIVOS ---
+  // --- GESTOR DE BASE DE DATOS Y CARGA DE ARCHIVOS (PROTEGIDO POR CONTRASEÑA) ---
   let parsedImportCache = [];
   let currentUploadedPhotoDataUrl = null;
 
   function initDatabaseManager() {
     const dbModal = document.getElementById('databaseModalBackdrop');
-    const openDbBtn = document.getElementById('openDbBtn');
-    const openDbCatalogBtn = document.getElementById('openDbCatalogBtn');
     const dbModalCloseBtn = document.getElementById('dbModalCloseBtn');
+    const dbLogoutBtn = document.getElementById('dbLogoutBtn');
+    const openAdminLink = document.getElementById('openAdminLink');
     if (!dbModal) return;
 
-    // Abrir modal
+    // Modal de Login
+    const loginModal = document.getElementById('adminLoginModalBackdrop');
+    const loginCloseBtn = document.getElementById('adminLoginCloseBtn');
+    const loginCancelBtn = document.getElementById('adminLoginCancelBtn');
+    const loginForm = document.getElementById('adminLoginForm');
+    const passwordInput = document.getElementById('adminPasswordInput');
+    const togglePassBtn = document.getElementById('togglePasswordBtn');
+    const togglePassIcon = document.getElementById('togglePasswordIcon');
+    const loginError = document.getElementById('adminLoginError');
+
+    let pendingTabAfterLogin = 'upload';
+
+    // Disparador principal de acceso de administración
+    function triggerAdminAccess(preferredTab = 'upload') {
+      pendingTabAfterLogin = preferredTab;
+      if (typeof TavernDB !== 'undefined' && TavernDB.isAdminLoggedIn()) {
+        openDbModal(preferredTab);
+      } else {
+        openLoginModal();
+      }
+    }
+
+    // Abrir modal de Login
+    function openLoginModal() {
+      if (loginModal) {
+        loginModal.classList.add('active');
+        loginModal.setAttribute('aria-hidden', 'false');
+        if (loginError) loginError.style.display = 'none';
+        if (passwordInput) {
+          passwordInput.value = '';
+          setTimeout(() => passwordInput.focus(), 150);
+        }
+      }
+    }
+
+    // Cerrar modal de Login
+    function closeLoginModal() {
+      if (loginModal) {
+        loginModal.classList.remove('active');
+        loginModal.setAttribute('aria-hidden', 'true');
+        if (passwordInput) passwordInput.value = '';
+        if (loginError) loginError.style.display = 'none';
+      }
+      if (window.location.hash === '#admin') {
+        history.replaceState(null, null, ' ');
+      }
+    }
+
+    // Toggle de visibilidad de contraseña
+    togglePassBtn?.addEventListener('click', () => {
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        togglePassIcon.className = 'bi bi-eye-slash';
+      } else {
+        passwordInput.type = 'password';
+        togglePassIcon.className = 'bi bi-eye';
+      }
+    });
+
+    // Envío del login
+    loginForm?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const pass = passwordInput.value;
+      const res = TavernDB.loginAdmin(pass);
+      if (res.success) {
+        closeLoginModal();
+        openDbModal(pendingTabAfterLogin);
+        showToast('👑 Acceso concedido al panel de administración.');
+      } else {
+        if (loginError) {
+          loginError.style.display = 'flex';
+          loginError.classList.remove('shake');
+          void loginError.offsetWidth;
+          loginError.classList.add('shake');
+        }
+        passwordInput.select();
+      }
+    });
+
+    loginCloseBtn?.addEventListener('click', closeLoginModal);
+    loginCancelBtn?.addEventListener('click', closeLoginModal);
+    loginModal?.addEventListener('click', (e) => {
+      if (e.target === loginModal) closeLoginModal();
+    });
+
+    // Click en el enlace discreto del footer
+    openAdminLink?.addEventListener('click', (e) => {
+      e.preventDefault();
+      triggerAdminAccess('upload');
+    });
+
+    // Cerrar sesión
+    dbLogoutBtn?.addEventListener('click', () => {
+      TavernDB.logoutAdmin();
+      closeDbModal();
+      showToast('🔒 Sesión de administrador cerrada.');
+      if (window.location.hash === '#admin') {
+        history.replaceState(null, null, ' ');
+      }
+    });
+
+    // Abrir modal de administración
     function openDbModal(tabName = 'upload') {
       dbModal.classList.add('active');
       dbModal.setAttribute('aria-hidden', 'false');
       switchDbTab(tabName);
     }
 
-    // Cerrar modal
+    // Cerrar modal de administración
     function closeDbModal() {
       dbModal.classList.remove('active');
       dbModal.setAttribute('aria-hidden', 'true');
+      if (window.location.hash === '#admin') {
+        history.replaceState(null, null, ' ');
+      }
     }
 
-    openDbBtn?.addEventListener('click', () => openDbModal('upload'));
-    openDbCatalogBtn?.addEventListener('click', () => openDbModal('upload'));
     dbModalCloseBtn?.addEventListener('click', closeDbModal);
     dbModal.addEventListener('click', (e) => {
       if (e.target === dbModal) closeDbModal();
     });
+
+    // Detectar hash #admin al cargar la página o al cambiar la URL
+    function checkAdminHash() {
+      if (window.location.hash === '#admin') {
+        triggerAdminAccess('upload');
+      }
+    }
+    window.addEventListener('hashchange', checkAdminHash);
+    setTimeout(checkAdminHash, 350);
 
     // Pestañas
     const tabBtns = dbModal.querySelectorAll('.db-tab-btn');
@@ -789,7 +901,8 @@ document.addEventListener('DOMContentLoaded', () => {
       'upload': document.getElementById('dbTabUpload'),
       'new-product': document.getElementById('dbTabNewProduct'),
       'inventory': document.getElementById('dbTabInventory'),
-      'backup': document.getElementById('dbTabBackup')
+      'backup': document.getElementById('dbTabBackup'),
+      'security': document.getElementById('dbTabSecurity')
     };
 
     function switchDbTab(targetTab) {
@@ -1071,6 +1184,45 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('dbExportJSONBtn')?.addEventListener('click', () => {
       TavernDB.exportToJSON();
       showToast('📥 Descargando copia de seguridad JSON...');
+    });
+
+    // Pestaña 5: Cambio de Contraseña de Administrador
+    const changePassForm = document.getElementById('dbChangePasswordForm');
+    const changePassError = document.getElementById('dbChangePassError');
+
+    changePassForm?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const currentPass = document.getElementById('dbCurrentPasswordInput').value;
+      const newPass = document.getElementById('dbNewPasswordInput').value;
+      const confirmPass = document.getElementById('dbConfirmPasswordInput').value;
+
+      if (!TavernDB.verifyAdminPassword(currentPass)) {
+        changePassError.textContent = 'La contraseña actual no es correcta.';
+        changePassError.style.display = 'block';
+        return;
+      }
+
+      if (newPass.length < 4) {
+        changePassError.textContent = 'La nueva contraseña debe tener al menos 4 caracteres.';
+        changePassError.style.display = 'block';
+        return;
+      }
+
+      if (newPass !== confirmPass) {
+        changePassError.textContent = 'La confirmación de la contraseña no coincide.';
+        changePassError.style.display = 'block';
+        return;
+      }
+
+      const res = TavernDB.setAdminPassword(newPass);
+      if (res.success) {
+        changePassError.style.display = 'none';
+        changePassForm.reset();
+        showToast('🔑 ¡Contraseña de administrador actualizada con éxito!');
+      } else {
+        changePassError.textContent = res.error || 'Error al actualizar contraseña.';
+        changePassError.style.display = 'block';
+      }
     });
   }
 

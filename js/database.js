@@ -488,6 +488,60 @@ Vino Malbec Joven 750ml;vinos;5200;🍷 Bodega;Malbec mendocino frutado y fresco
     a.remove();
   }
 
+  // --- GESTIÓN DE SEGURIDAD Y ACCESO ADMINISTRADOR ---
+  const ADMIN_PASS_KEY = 'taberna_homero_admin_pass_v1';
+  const ADMIN_SESSION_KEY = 'taberna_homero_admin_session_active';
+  const DEFAULT_ADMIN_PASSWORD = 'homero123';
+
+  function getAdminPassword() {
+    try {
+      return localStorage.getItem(ADMIN_PASS_KEY) || DEFAULT_ADMIN_PASSWORD;
+    } catch(e) {
+      return DEFAULT_ADMIN_PASSWORD;
+    }
+  }
+
+  function setAdminPassword(newPassword) {
+    if (!newPassword || newPassword.trim().length < 4) {
+      return { success: false, error: 'La contraseña debe tener al menos 4 caracteres.' };
+    }
+    try {
+      localStorage.setItem(ADMIN_PASS_KEY, newPassword.trim());
+      return { success: true };
+    } catch(e) {
+      return { success: false, error: 'No se pudo guardar la contraseña en el navegador.' };
+    }
+  }
+
+  function verifyAdminPassword(inputPass) {
+    return Boolean(inputPass && inputPass.trim() === getAdminPassword());
+  }
+
+  function isAdminLoggedIn() {
+    try {
+      return sessionStorage.getItem(ADMIN_SESSION_KEY) === 'true';
+    } catch(e) {
+      return false;
+    }
+  }
+
+  function loginAdmin(inputPass) {
+    if (verifyAdminPassword(inputPass)) {
+      try {
+        sessionStorage.setItem(ADMIN_SESSION_KEY, 'true');
+      } catch(e) {}
+      return { success: true };
+    }
+    return { success: false, error: 'Contraseña incorrecta. Por favor verificá los datos.' };
+  }
+
+  function logoutAdmin() {
+    try {
+      sessionStorage.removeItem(ADMIN_SESSION_KEY);
+    } catch(e) {}
+    return { success: true };
+  }
+
   // Inicializar al cargar el script
   init();
 
@@ -507,7 +561,13 @@ Vino Malbec Joven 750ml;vinos;5200;🍷 Bodega;Malbec mendocino frutado y fresco
     exportToJSON,
     exportToCSV,
     downloadCSVTemplate,
-    downloadJSONTemplate
+    downloadJSONTemplate,
+    getAdminPassword,
+    setAdminPassword,
+    verifyAdminPassword,
+    isAdminLoggedIn,
+    loginAdmin,
+    logoutAdmin
   };
 })();
 

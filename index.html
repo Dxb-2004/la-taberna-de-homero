@@ -138,11 +138,6 @@
       </a>
 
       <div class="header-right">
-        <button class="header-db-btn" id="openDbBtn" title="Base de Datos y Cargar Archivos">
-          <i class="bi bi-database-fill-gear"></i>
-          <span class="db-btn-text">Base de Datos</span>
-        </button>
-
         <a href="https://wa.me/542914981200?text=Hola%20La%20Taberna%20de%20Homero!%20Quiero%20hacer%20una%20consulta" 
            target="_blank" 
            rel="noopener noreferrer" 
@@ -301,10 +296,6 @@
           <option value="name-asc">🔤 Nombre A-Z</option>
         </select>
 
-        <button class="btn btn-db-panel" id="openDbCatalogBtn" title="Base de Datos: Cargar archivos CSV/JSON o agregar productos">
-          <i class="bi bi-database-fill-gear"></i>
-          <span>Cargar Archivos / BD</span>
-        </button>
       </div>
 
       <nav class="categories-tabs" id="categoriesRow" aria-label="Categorías del catálogo">
@@ -532,7 +523,13 @@
 
     <div class="footer-bottom-bar">
       <span>© 2026 La Taberna de Homero • Bahía Blanca, Argentina. Todos los derechos reservados.</span>
-      <span>Diseñado con pasión taberna de homero & ByteFix 🍩</span>
+      <div class="footer-bottom-links">
+        <span>Diseñado con pasión taberna de homero & ByteFix 🍩</span>
+        <span class="footer-sep">•</span>
+        <a href="#admin" class="footer-admin-link" id="openAdminLink" title="Acceso exclusivo administración">
+          <i class="bi bi-shield-lock-fill"></i> Administración
+        </a>
+      </div>
     </div>
   </footer>
 
@@ -648,7 +645,84 @@
             </button>
           </div>
         </div>
+
+        <!-- PESTAÑA 5: SEGURIDAD Y CAMBIO DE CONTRASEÑA -->
+        <div class="db-tab-pane" id="dbTabSecurity">
+          <div class="db-security-card">
+            <div class="db-security-header">
+              <div class="db-security-icon">
+                <i class="bi bi-key-fill"></i>
+              </div>
+              <h4>Cambiar Contraseña de Administrador</h4>
+              <p>Podés cambiar la clave de acceso a este panel en cualquier momento. La contraseña por defecto es <code>homero123</code>.</p>
+            </div>
+
+            <form id="dbChangePasswordForm" class="db-form" style="max-width: 440px; margin: 0 auto;">
+              <div class="form-group">
+                <label for="dbCurrentPasswordInput">Contraseña Actual <span class="required">*</span></label>
+                <input type="password" id="dbCurrentPasswordInput" class="form-input" placeholder="Ingresá tu clave actual" required>
+              </div>
+
+              <div class="form-group">
+                <label for="dbNewPasswordInput">Nueva Contraseña <span class="required">*</span></label>
+                <input type="password" id="dbNewPasswordInput" class="form-input" minlength="4" placeholder="Mínimo 4 caracteres" required>
+              </div>
+
+              <div class="form-group">
+                <label for="dbConfirmPasswordInput">Confirmar Nueva Contraseña <span class="required">*</span></label>
+                <input type="password" id="dbConfirmPasswordInput" class="form-input" minlength="4" placeholder="Repetí la nueva clave" required>
+              </div>
+
+              <div class="admin-error-msg" id="dbChangePassError" style="display: none; margin-bottom: 0.75rem;"></div>
+
+              <button type="submit" class="btn btn-primary" style="width: 100%;">
+                <i class="bi bi-check2-circle"></i> Guardar Nueva Contraseña
+              </button>
+            </form>
+          </div>
+        </div>
       </div>
+    </div>
+  </div>
+
+  <!-- 11.0. MODAL DE ACCESO ADMINISTRATIVO (PROTEGIDO POR CONTRASEÑA) -->
+  <div class="admin-login-backdrop" id="adminLoginModalBackdrop" aria-hidden="true" role="dialog" aria-labelledby="adminLoginTitle">
+    <div class="admin-login-card">
+      <div class="admin-login-header">
+        <div class="admin-login-icon">
+          <i class="bi bi-shield-lock-fill"></i>
+        </div>
+        <h3 id="adminLoginTitle" class="admin-login-title">Panel de Administración</h3>
+        <p class="admin-login-subtitle">Ingresá la clave de acceso para gestionar la base de datos y catálogo de La Taberna.</p>
+        <button class="modal-close-icon" id="adminLoginCloseBtn" aria-label="Cerrar modal de acceso">&times;</button>
+      </div>
+
+      <form id="adminLoginForm" class="admin-login-form">
+        <div class="form-group">
+          <label for="adminPasswordInput">Contraseña de Administrador</label>
+          <div class="admin-password-field-wrap">
+            <input type="password" 
+                   id="adminPasswordInput" 
+                   class="form-input admin-password-input" 
+                   placeholder="Ingresá tu contraseña..." 
+                   autocomplete="current-password" 
+                   required>
+            <button type="button" class="btn-toggle-password" id="togglePasswordBtn" title="Mostrar/Ocultar contraseña" aria-label="Mostrar contraseña">
+              <i class="bi bi-eye" id="togglePasswordIcon"></i>
+            </button>
+          </div>
+          <div class="admin-error-msg" id="adminLoginError" style="display: none;">
+            <i class="bi bi-exclamation-triangle-fill"></i> Contraseña incorrecta. Verificá los caracteres e intentá nuevamente.
+          </div>
+        </div>
+
+        <div class="admin-login-actions">
+          <button type="button" class="btn btn-ghost btn-sm" id="adminLoginCancelBtn">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="adminLoginSubmitBtn">
+            <i class="bi bi-unlock-fill"></i> Entrar al Panel
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -658,12 +732,17 @@
       <div class="db-modal-header">
         <div class="db-modal-title-group">
           <div class="db-modal-badge">
-            <i class="bi bi-database-fill-gear"></i> GESTOR DE DATOS
+            <i class="bi bi-shield-check"></i> ADMINISTRACIÓN • ACCESO AUTORIZADO
           </div>
-          <h3 id="dbModalTitle" class="db-modal-title">Base de Datos de la Taberna</h3>
+          <h3 id="dbModalTitle" class="db-modal-title">Gestión de Catálogo y Base de Datos</h3>
           <p class="db-modal-subtitle">Cargá archivos CSV/JSON, subí fotos de productos o administrá tu inventario en tiempo real.</p>
         </div>
-        <button class="modal-close-icon" id="dbModalCloseBtn" aria-label="Cerrar modal de base de datos">&times;</button>
+        <div class="db-header-actions">
+          <button type="button" class="btn btn-outline btn-sm db-logout-btn" id="dbLogoutBtn" title="Cerrar sesión de administrador">
+            <i class="bi bi-box-arrow-right"></i> Salir de Admin
+          </button>
+          <button class="modal-close-icon" id="dbModalCloseBtn" aria-label="Cerrar modal de base de datos">&times;</button>
+        </div>
       </div>
 
       <!-- Pestañas de Navegación -->
@@ -683,6 +762,10 @@
         <button type="button" class="db-tab-btn" data-dbtab="backup">
           <i class="bi bi-shield-check"></i>
           <span>Copia de Seguridad</span>
+        </button>
+        <button type="button" class="db-tab-btn" data-dbtab="security">
+          <i class="bi bi-key-fill"></i>
+          <span>Contraseña</span>
         </button>
       </nav>
 
