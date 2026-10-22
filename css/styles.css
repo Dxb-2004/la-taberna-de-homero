@@ -715,6 +715,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 1.15rem;
+  min-width: 0;
+  width: 100%;
 }
 
 .search-and-sort-row {
@@ -798,14 +800,68 @@ body {
   border-color: var(--accent-gold);
 }
 
+/* Contenedor de Desplazamiento de Categorías */
+.categories-scroll-wrapper {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.cat-scroll-arrow {
+  display: flex;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  border: 1.5px solid #E5E7EB;
+  color: var(--text-primary);
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  z-index: 5;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  transition: all var(--transition-fast);
+}
+
+.cat-scroll-arrow:hover {
+  background: var(--accent-gold);
+  color: #FFFFFF;
+  border-color: var(--accent-gold);
+  transform: scale(1.05);
+}
+
+.cat-scroll-arrow:active {
+  transform: scale(0.92);
+}
+
 /* Pestañas de Categoría */
 .categories-tabs {
   display: flex;
   align-items: center;
   gap: 0.65rem;
-  overflow-x: auto;
-  padding-bottom: 0.35rem;
-  scrollbar-width: thin;
+  overflow-x: auto !important;
+  overflow-y: hidden;
+  width: 100%;
+  min-width: 0 !important;
+  flex: 1;
+  padding: 0.35rem 0.25rem 0.55rem;
+  margin: 0;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch !important;
+  touch-action: pan-x pan-y !important;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+
+.categories-tabs::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 .category-tab-btn {
@@ -821,7 +877,11 @@ body {
   font-weight: 700;
   font-size: 0.84rem;
   cursor: pointer;
-  white-space: nowrap;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: pan-x pan-y !important;
   transition: all var(--transition-fast);
   letter-spacing: 0.03em;
   text-transform: uppercase;
@@ -2433,7 +2493,7 @@ body {
     gap: 0.65rem;
   }
 
-  /* 6. Panel de Catálogo y Controles */
+  /* 6. Panel de Catálogo y Controles Móvil */
   .catalog-control-panel {
     margin: 1.25rem auto 1.5rem;
     padding: 0 0.85rem;
@@ -2442,8 +2502,10 @@ body {
   }
 
   .controls-card {
-    padding: 1rem;
+    padding: 0.95rem 0.85rem;
     border-radius: var(--radius-md);
+    min-width: 0;
+    width: 100%;
   }
 
   .search-and-sort-row {
@@ -2456,14 +2518,51 @@ body {
     min-width: 0;
   }
 
+  .categories-scroll-wrapper {
+    width: 100%;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .cat-scroll-arrow {
+    display: flex;
+    width: 32px;
+    height: 32px;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+
   .categories-tabs {
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    padding-bottom: 0.25rem;
+    display: flex !important;
+    align-items: center !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: pan-x pan-y !important;
+    scrollbar-width: none !important;
+    padding: 0.25rem 0.15rem 0.45rem !important;
+    gap: 0.5rem !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    flex: 1 !important;
   }
 
   .categories-tabs::-webkit-scrollbar {
-    display: none;
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+
+  .category-tab-btn {
+    padding: 0.55rem 0.95rem !important;
+    font-size: 0.78rem !important;
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+    touch-action: pan-x pan-y !important;
+    user-select: none !important;
+    -webkit-user-select: none !important;
   }
 
   /* 7. Grilla de Productos en Móviles */

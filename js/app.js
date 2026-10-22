@@ -168,6 +168,9 @@ document.addEventListener('DOMContentLoaded', () => {
         currentCategory = cat.id;
         currentSectionTitle.textContent = cat.id === 'all' ? 'Todos los Productos' : cat.name;
         renderProducts();
+        try {
+          btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        } catch(e) {}
       });
 
       categoriesRow.appendChild(btn);
