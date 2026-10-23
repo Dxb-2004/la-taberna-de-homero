@@ -390,10 +390,12 @@ body {
   width: 52px;
   height: 52px;
   border-radius: 50%;
-  object-fit: cover;
+  object-fit: contain;
   border: 2px solid var(--accent-yellow);
   box-shadow: 0 0 16px rgba(255, 217, 15, 0.35);
   background: #18161E;
+  padding: 2px;
+  box-sizing: border-box;
   transition: transform var(--transition-fast);
 }
 

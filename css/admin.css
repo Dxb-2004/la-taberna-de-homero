@@ -45,11 +45,15 @@ body.admin-body {
 }
 
 .admin-logo {
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  object-fit: cover;
-  border: 1px solid rgba(255, 217, 15, 0.3);
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: contain;
+  border: 2px solid rgba(255, 217, 15, 0.4);
+  background: #18161E;
+  padding: 2px;
+  box-sizing: border-box;
+  box-shadow: 0 0 12px rgba(255, 217, 15, 0.25);
 }
 
 .admin-brand-info h1 {
