@@ -242,7 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="card-media">
             <span class="card-badge-tag">${catObj.name.replace(/^[^\s]+ /, '')}</span>
             ${prod.badge ? `<span class="card-promo-badge">${prod.badge}</span>` : ''}
-            <img src="${prod.image}" alt="${escapeHtml(prod.name)}" loading="lazy">
+            <img src="${prod.image}" alt="${escapeHtml(prod.name)}" loading="lazy" onerror="this.onerror=null; this.src='assets/logo-homero-pizza.svg'; this.classList.add('img-fallback');">
           </div>
           <div class="card-content">
             <h3 class="card-title">${escapeHtml(prod.name)}</h3>
@@ -256,9 +256,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 <button class="quick-view-btn" title="Ver detalles completos" data-action="view" data-id="${prod.id}">
                   <i class="bi bi-eye"></i>
                 </button>
-                <button class="add-cart-btn" data-action="add" data-id="${prod.id}">
-                  <i class="bi bi-plus-lg"></i>
-                  <span>${cartQty > 0 ? `Agregado (${cartQty})` : 'Agregar'}</span>
+                <button class="add-cart-btn ${cartQty > 0 ? 'is-in-cart' : ''}" data-action="add" data-id="${prod.id}">
+                  <i class="bi ${cartQty > 0 ? 'bi-check-lg' : 'bi-plus-lg'}"></i>
+                  <span>${cartQty > 0 ? `En Pedido (${cartQty})` : 'Agregar'}</span>
                 </button>
               </div>
             </div>
@@ -303,6 +303,13 @@ document.addEventListener('DOMContentLoaded', () => {
     saveCart();
     updateCartUI();
     renderProducts(); // actualiza el estado de los botones en las cards
+    const targetBtn = document.querySelector(`.add-cart-btn[data-id="${productId}"]`);
+    if (targetBtn) {
+      targetBtn.classList.remove('btn-pop');
+      void targetBtn.offsetWidth;
+      targetBtn.classList.add('btn-pop');
+      setTimeout(() => targetBtn.classList.remove('btn-pop'), 260);
+    }
     triggerCartBounce();
     showToast(`¡${product.name} agregado al pedido! 🍻`);
   }
@@ -391,8 +398,19 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function triggerCartBounce() {
-    cartBtnTrigger.classList.add('bounce');
-    setTimeout(() => cartBtnTrigger.classList.remove('bounce'), 350);
+    if (cartBtnTrigger) {
+      cartBtnTrigger.classList.remove('bounce');
+      void cartBtnTrigger.offsetWidth;
+      cartBtnTrigger.classList.add('bounce');
+      setTimeout(() => cartBtnTrigger.classList.remove('bounce'), 380);
+    }
+    const mobileCart = document.getElementById('mobileCartBtn');
+    if (mobileCart) {
+      mobileCart.classList.remove('bounce');
+      void mobileCart.offsetWidth;
+      mobileCart.classList.add('bounce');
+      setTimeout(() => mobileCart.classList.remove('bounce'), 380);
+    }
   }
 
   // --- CONTROL DEL DRAWER ---

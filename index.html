@@ -572,7 +572,7 @@
       <!-- Estado Carrito Vacío -->
       <div class="cart-empty-state" id="cartEmptyView">
         <div class="cart-empty-icon">🛒</div>
-        <h4 style="font-family: var(--font-heading); font-size: 1.25rem; color: #FFFFFF; margin-bottom: 0.5rem;">Tu carrito está vacío</h4>
+        <h4 style="font-family: var(--font-heading); font-size: 1.25rem; color: var(--text-primary); margin-bottom: 0.5rem;">Tu carrito está vacío</h4>
         <p style="color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 1.5rem;">
           Agregá combos de previa, cervezas heladas o snacks Quentos para armar tu pedido.
         </p>
@@ -668,42 +668,6 @@
             <button class="btn btn-ghost btn-sm" id="modalShareBtn" title="Compartir producto">
               <i class="bi bi-share-fill"></i>
             </button>
-          </div>
-        </div>
-
-        <!-- PESTAÑA 5: SEGURIDAD Y CAMBIO DE CONTRASEÑA -->
-        <div class="db-tab-pane" id="dbTabSecurity">
-          <div class="db-security-card">
-            <div class="db-security-header">
-              <div class="db-security-icon">
-                <i class="bi bi-key-fill"></i>
-              </div>
-              <h4>Cambiar Contraseña de Administrador</h4>
-              <p>Podés cambiar la clave de acceso a este panel en cualquier momento. La contraseña por defecto es <code>homero123</code>.</p>
-            </div>
-
-            <form id="dbChangePasswordForm" class="db-form" style="max-width: 440px; margin: 0 auto;">
-              <div class="form-group">
-                <label for="dbCurrentPasswordInput">Contraseña Actual <span class="required">*</span></label>
-                <input type="password" id="dbCurrentPasswordInput" class="form-input" placeholder="Ingresá tu clave actual" required>
-              </div>
-
-              <div class="form-group">
-                <label for="dbNewPasswordInput">Nueva Contraseña <span class="required">*</span></label>
-                <input type="password" id="dbNewPasswordInput" class="form-input" minlength="4" placeholder="Mínimo 4 caracteres" required>
-              </div>
-
-              <div class="form-group">
-                <label for="dbConfirmPasswordInput">Confirmar Nueva Contraseña <span class="required">*</span></label>
-                <input type="password" id="dbConfirmPasswordInput" class="form-input" minlength="4" placeholder="Repetí la nueva clave" required>
-              </div>
-
-              <div class="admin-error-msg" id="dbChangePassError" style="display: none; margin-bottom: 0.75rem;"></div>
-
-              <button type="submit" class="btn btn-primary" style="width: 100%;">
-                <i class="bi bi-check2-circle"></i> Guardar Nueva Contraseña
-              </button>
-            </form>
           </div>
         </div>
       </div>
@@ -1012,6 +976,42 @@
                 <i class="bi bi-download"></i> Descargar JSON
               </button>
             </div>
+          </div>
+        </div>
+
+        <!-- PESTAÑA 5: SEGURIDAD Y CAMBIO DE CONTRASEÑA -->
+        <div class="db-tab-pane" id="dbTabSecurity">
+          <div class="db-security-card">
+            <div class="db-security-header">
+              <div class="db-security-icon">
+                <i class="bi bi-key-fill"></i>
+              </div>
+              <h4>Cambiar Contraseña de Administrador</h4>
+              <p>Podés cambiar la clave de acceso a este panel en cualquier momento. La contraseña por defecto es <code>homero123</code>.</p>
+            </div>
+
+            <form id="dbChangePasswordForm" class="db-form" style="max-width: 440px; margin: 0 auto;">
+              <div class="form-group">
+                <label for="dbCurrentPasswordInput">Contraseña Actual <span class="required">*</span></label>
+                <input type="password" id="dbCurrentPasswordInput" class="form-input" placeholder="Ingresá tu clave actual" required>
+              </div>
+
+              <div class="form-group">
+                <label for="dbNewPasswordInput">Nueva Contraseña <span class="required">*</span></label>
+                <input type="password" id="dbNewPasswordInput" class="form-input" minlength="4" placeholder="Mínimo 4 caracteres" required>
+              </div>
+
+              <div class="form-group">
+                <label for="dbConfirmPasswordInput">Confirmar Nueva Contraseña <span class="required">*</span></label>
+                <input type="password" id="dbConfirmPasswordInput" class="form-input" minlength="4" placeholder="Repetí la nueva clave" required>
+              </div>
+
+              <div class="admin-error-msg" id="dbChangePassError" style="display: none; margin-bottom: 0.75rem;"></div>
+
+              <button type="submit" class="btn btn-primary" style="width: 100%;">
+                <i class="bi bi-check2-circle"></i> Guardar Nueva Contraseña
+              </button>
+            </form>
           </div>
         </div>
       </div>
