@@ -9,7 +9,7 @@
   <meta name="description" content="¡La mejor taberna de Bahía Blanca para tus previas y antojos! Combos de Fernet con Coca, línea completa Quentos, cervezas heladas y pizzas listas para el horno. Vicente López 139. Retiro al instante en mostrador.">
   <meta name="keywords" content="La Taberna de Homero, Bahía Blanca, combos fernet, previa bahia blanca, quentos, bebidas frias, retiro en el local, vicente lopez 139, cerveza duff, pizzas listas para el horno">
   <meta name="author" content="La Taberna de Homero & ByteFix">
-  <meta name="theme-color" content="#F8F7F4">
+  <meta name="theme-color" content="#0F0E13">
 
   <!-- Open Graph / Redes Sociales & WhatsApp Preview -->
   <meta property="og:type" content="website">
@@ -21,10 +21,10 @@
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="assets/logo-homero-pizza-transparent.png">
 
-  <!-- Tipografías Craft Brewery & Gastropub: Bebas Neue, Outfit & Plus Jakarta Sans -->
+  <!-- Tipografías Dark Speakeasy & Neon Pop: Fredoka, Bebas Neue, Outfit & Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fredoka:wght@600;700;800&family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <!-- Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -72,6 +72,12 @@
   </script>
 </head>
 <body>
+
+  <!-- Manchas de luz difuminadas (Ambient Speakeasy Glows) -->
+  <div class="ambient-glow glow-amber" style="top: 80px; left: -100px;"></div>
+  <div class="ambient-glow glow-purple" style="top: 500px; right: -120px;"></div>
+  <div class="ambient-glow glow-pink" style="top: 1300px; left: -80px;"></div>
+  <div class="ambient-glow glow-amber" style="top: 2200px; right: -100px;"></div>
 
   <!-- 1. TOP TICKER BAR -->
   <div class="top-ticker" aria-label="Avisos y Novedades">
@@ -137,7 +143,7 @@
     </div>
   </div>
 
-  <!-- 2. HEADER NAVBAR -->
+  <!-- 2. HEADER NAVBAR (Glassmorphism Speakeasy) -->
   <header class="site-header">
     <div class="header-container">
       <a href="#" class="brand-wrapper" title="La Taberna de Homero">
@@ -154,7 +160,19 @@
         </div>
       </a>
 
+      <!-- Enlaces de navegación rápida (Desktop) -->
+      <nav class="header-nav-links" aria-label="Navegación principal">
+        <a href="#catalogo" class="nav-link-item"><i class="bi bi-grid-fill"></i> Carta</a>
+        <a href="#manifiesto" class="nav-link-item"><i class="bi bi-award-fill"></i> Taberna</a>
+        <a href="#ubicacion" class="nav-link-item"><i class="bi bi-geo-alt-fill"></i> Sede</a>
+      </nav>
+
       <div class="header-right">
+        <a href="#catalogo" class="btn btn-menu-cta header-menu-btn" title="Ver Menú / Pedir Ahora">
+          <i class="bi bi-cup-straw"></i>
+          <span>Pedir Ahora</span>
+        </a>
+
         <a href="https://wa.me/542914981200?text=Hola%20La%20Taberna%20de%20Homero!%20Quiero%20hacer%20una%20consulta" 
            target="_blank" 
            rel="noopener noreferrer" 
@@ -173,7 +191,7 @@
     </div>
   </header>
 
-  <!-- 3. HERO BANNER ESTILO TROPERA (Sede Principal) -->
+  <!-- 3. HERO BANNER DARK SPEAKEASY & NEON POP -->
   <section class="hero-wrapper">
     <div class="hero-tropera-card">
       <div class="tropera-center-box">
@@ -182,25 +200,33 @@
         </span>
 
         <h2 class="hero-tropera-title">
-          LA TABERNA DE HOMERO
+          <span class="neon-text-yellow">LA TABERNA</span> <span class="neon-text-white">DE HOMERO</span>
         </h2>
 
         <p class="hero-tropera-subtitle">
           CERVEZAS HELADAS • COMBOS DE PREVIA • PIZZAS LISTAS PARA EL HORNO &amp; SNACKS DE CULTO
         </p>
 
+        <!-- Mascota flotante temática con drop shadow neon -->
+        <div class="hero-mascot-wrapper">
+          <img src="assets/homero-pizza.png" 
+               alt="Homero Simpson comiendo pizza - La Taberna de Homero" 
+               class="hero-mascot-floating"
+               onerror="this.src='assets/logo-homero-pizza-transparent.png'">
+        </div>
+
         <div class="hero-tropera-actions">
-          <a href="#catalogo" class="btn btn-tropera-primary">
-            <i class="bi bi-cup-straw"></i> Ver Carta de la Taberna
+          <a href="#catalogo" class="btn btn-hero-primary btn-tropera-primary">
+            <i class="bi bi-cup-straw"></i> Ver Menú / Pedir Ahora
           </a>
           <a href="https://wa.me/542914981200?text=Hola%20La%20Taberna%20de%20Homero!%20Quiero%20consultar%20promos" 
              target="_blank" 
-             class="btn btn-tropera-outline">
+             class="btn btn-hero-secondary btn-tropera-outline">
             <i class="bi bi-whatsapp"></i> Pedir por WhatsApp
           </a>
         </div>
 
-        <!-- Banner de Ubicación y Horarios Estilo Tropera -->
+        <!-- Banner de Ubicación y Horarios Estilo Speakeasy Neon -->
         <div class="tropera-meta-banner">
           <span class="tropera-meta-item">
             <i class="bi bi-geo-alt-fill text-gold"></i> VICENTE LÓPEZ 139, BAHÍA BLANCA
@@ -218,8 +244,8 @@
     </div>
   </section>
 
-  <!-- 3.1. MANIFIESTO DE LA TABERNA (Estilo Tropera • En esta taberna celebramos) -->
-  <section class="tavern-manifesto-section">
+  <!-- 3.1. MANIFIESTO DE LA TABERNA (Mística Speakeasy & Tradición) -->
+  <section class="tavern-manifesto-section" id="manifiesto">
     <div class="manifesto-container">
       <div class="manifesto-grid">
         <!-- Columna 1: El Patrón de la Taberna (Homero con Pizza) -->
@@ -394,7 +420,7 @@
   </section>
 
   <!-- 8. UBICACIÓN, HORARIOS & MAPA -->
-  <section class="location-section">
+  <section class="location-section" id="ubicacion">
     <div class="location-card-container">
       <div class="location-details-col">
         <span class="badge badge-gold" style="align-self: flex-start; margin-bottom: 0.75rem;">
